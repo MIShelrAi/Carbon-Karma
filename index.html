@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculate and track your carbon footprint in Nepal. Get personalized suggestions to reduce emissions.">
+    <title>Carbon Emission Control - Nepal 🇳🇵</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- jsPDF for report generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>🌍 Carbon Emission Control</h1>
+                <p class="tagline">Empowering Nepal for a Greener Tomorrow</p>
+            </div>
+            <div class="header-stats">
+                <div class="mini-stat">
+                    <span class="stat-icon">🏔️</span>
+                    <div>
+                        <strong>Nepal's Goal</strong>
+                        <p>Carbon Neutral by 2045</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#calculator" class="nav-link active">Calculator</a></li>
+                <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="#actions" class="nav-link">My Actions</a></li>
+                <li><a href="#leaderboard" class="nav-link">Leaderboard</a></li>
+                <li><a href="#awareness" class="nav-link">Awareness</a></li>
+                <li><a href="#pledge" class="nav-link">Green Pledge</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            
+            <!-- Calculator Section -->
+            <section id="calculator" class="section">
+                <div class="section-header">
+                    <h2>🧮 Carbon Footprint Calculator</h2>
+                    <p>Calculate your monthly carbon emissions based on Nepal-specific factors</p>
+                </div>
+
+                <form id="carbonForm" class="calculator-form">
+                    <!-- Location Type -->
+                    <div class="form-card">
+                        <h3>📍 Location</h3>
+                        <div class="form-group">
+                            <label for="locationType">Living Area</label>
+                            <select id="locationType" name="locationType" required>
+                                <option value="urban">Urban (Kathmandu, Pokhara, etc.)</option>
+                                <option value="rural">Rural Area</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Transportation -->
+                    <div class="form-card">
+                        <h3>🚗 Transportation (Daily Travel)</h3>
+                        
+                        <div class="form-group">
+                            <label for="motorbikeKm">Motorbike/Scooter (km/day)</label>
+                            <input type="number" id="motorbikeKm" name="motorbikeKm" min="0" step="0.1" value="0" placeholder="e.g., 10">
+                            <small>Average fuel efficiency: 40-50 km/L</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="carKm">Car/Jeep (km/day)</label>
+                            <input type="number" id="carKm" name="carKm" min="0" step="0.1" value="0" placeholder="e.g., 5">
+                            <small>Average fuel efficiency: 10-15 km/L</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="busKm">Public Bus/Microbus (km/day)</label>
+                            <input type="number" id="busKm" name="busKm" min="0" step="0.1" value="0" placeholder="e.g., 20">
+                            <small>Eco-friendly option! Lower emissions per person</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="evKm">Electric Vehicle (km/day)</label>
+                            <input type="number" id="evKm" name="evKm" min="0" step="0.1" value="0" placeholder="e.g., 15">
+                            <small>Cleanest option with Nepal's hydropower! ⚡</small>
+                        </div>
+                    </div>
+
+                    <!-- Energy Consumption -->
+                    <div class="form-card">
+                        <h3>⚡ Energy Consumption</h3>
+                        
+                        <div class="form-group">
+                            <label for="electricity">Electricity Usage (kWh/month)</label>
+                            <input type="number" id="electricity" name="electricity" min="0" step="0.1" value="0" placeholder="e.g., 150">
+                            <small>Check your NEA bill. Average household: 100-200 kWh/month</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lpgCylinders">LPG Gas Cylinders (per month)</label>
+                            <input type="number" id="lpgCylinders" name="lpgCylinders" min="0" step="0.5" value="0" placeholder="e.g., 1">
+                            <small>Standard 14.2 kg cylinder</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="firewood">Firewood/Biomass (kg/month)</label>
+                            <input type="number" id="firewood" name="firewood" min="0" step="1" value="0" placeholder="e.g., 50">
+                            <small>Common in rural areas for cooking/heating</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="biogas">
+                                <input type="checkbox" id="biogas" name="biogas">
+                                I use Biogas (Gobar Gas)
+                            </label>
+                            <small>Great eco-friendly alternative! 🌱</small>
+                        </div>
+                    </div>
+
+                    <!-- Waste Management -->
+                    <div class="form-card">
+                        <h3>🗑️ Waste Management</h3>
+                        
+                        <div class="form-group">
+                            <label for="wasteManagement">Waste Disposal Method</label>
+                            <select id="wasteManagement" name="wasteManagement">
+                                <option value="mixed">Mixed/Unsorted</option>
+                                <option value="some-recycling">Some Recycling</option>
+                                <option value="composting">Composting Organic Waste</option>
+                                <option value="full-recycling">Full Recycling & Composting</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-large">
+                        Calculate My Carbon Footprint
+                    </button>
+                </form>
+
+                <!-- Results Section -->
+                <div id="results" class="results-container" style="display: none;">
+                    <div class="results-header">
+                        <h3>Your Carbon Footprint Results</h3>
+                        <button id="saveResults" class="btn-secondary">💾 Save to Dashboard</button>
+                    </div>
+
+                    <div class="results-grid">
+                        <div class="result-card primary">
+                            <div class="result-icon">🌍</div>
+                            <div class="result-content">
+                                <h4>Monthly Emissions</h4>
+                                <p class="result-value" id="totalEmissions">0</p>
+                                <p class="result-unit">kg CO₂e</p>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="result-icon">📊</div>
+                            <div class="result-content">
+                                <h4>Annual Estimate</h4>
+                                <p class="result-value" id="annualEmissions">0</p>
+                                <p class="result-unit">tons CO₂e/year</p>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="result-icon">👥</div>
+                            <div class="result-content">
+                                <h4>vs Nepal Average</h4>
+                                <p class="result-value" id="comparison">0</p>
+                                <p class="result-unit" id="comparisonText">comparison</p>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="result-icon">🌳</div>
+                            <div class="result-content">
+                                <h4>Trees to Offset</h4>
+                                <p class="result-value" id="treesNeeded">0</p>
+                                <p class="result-unit">trees/year</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Eco Score -->
+                    <div class="eco-score" id="ecoScore">
+                        <div class="score-label">Your Eco Score:</div>
+                        <div class="score-badge" id="scoreBadge">-</div>
+                        <div class="score-message" id="scoreMessage">-</div>
+                    </div>
+
+                    <!-- Breakdown Chart -->
+                    <div class="chart-container">
+                        <h4>Emission Breakdown</h4>
+                        <canvas id="emissionChart"></canvas>
+                    </div>
+
+                    <!-- Suggestions -->
+                    <div class="suggestions" id="suggestions">
+                        <h3>🌱 Personalized Reduction Suggestions</h3>
+                        <div id="suggestionsList" class="suggestions-list"></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="results-actions">
+                        <button id="downloadReport" class="btn-primary">📄 Download Report</button>
+                        <button id="newCalculation" class="btn-secondary">🔄 New Calculation</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section">
+                <div class="section-header">
+                    <h2>📈 Your Emission Dashboard</h2>
+                    <p>Track your progress over time</p>
+                </div>
+
+                <div id="dashboardEmpty" class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <h3>No Data Yet</h3>
+                    <p>Calculate your carbon footprint and save results to start tracking your progress!</p>
+                </div>
+
+                <div id="dashboardContent" style="display: none;">
+                    <!-- Summary Stats -->
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <h4>Total Records</h4>
+                            <p class="stat-number" id="totalRecords">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Latest Emission</h4>
+                            <p class="stat-number" id="latestEmission">0</p>
+                            <small>kg CO₂e/month</small>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Average Emission</h4>
+                            <p class="stat-number" id="avgEmission">0</p>
+                            <small>kg CO₂e/month</small>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Trend</h4>
+                            <p class="stat-number" id="trendIndicator">-</p>
+                        </div>
+                    </div>
+
+                    <!-- Progress Chart -->
+                    <div class="chart-container">
+                        <h4>Monthly Emission History</h4>
+                        <canvas id="progressChart"></canvas>
+                    </div>
+
+                    <!-- History Table -->
+                    <div class="history-section">
+                        <div class="history-header">
+                            <h4>Calculation History</h4>
+                            <button id="clearHistory" class="btn-danger-sm">🗑️ Clear All</button>
+                        </div>
+                        <div id="historyTable" class="history-table"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Actions Section -->
+            <section id="actions" class="section">
+                <div class="section-header">
+                    <h2>🌱 My Carbon Reduction Actions</h2>
+                    <p>Track your positive environmental actions and earn rewards!</p>
+                </div>
+
+                <!-- User Profile Card -->
+                <div class="user-profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="userAvatar">👤</div>
+                        <div class="profile-info">
+                            <h3 id="userName">Climate Warrior</h3>
+                            <p id="userLevel">Level 1 - Beginner</p>
+                        </div>
+                        <button id="editProfile" class="btn-secondary-sm">Edit Profile</button>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="totalPoints">0</span>
+                            <span class="stat-label">Points</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="totalTreesPlanted">0</span>
+                            <span class="stat-label">Trees Planted</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="carbonReduced">0</span>
+                            <span class="stat-label">kg CO₂ Saved</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="actionsCount">0</span>
+                            <span class="stat-label">Actions Taken</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="achievements-section">
+                    <h3>🏆 Your Achievements</h3>
+                    <div id="achievementsList" class="achievements-grid">
+                        <!-- Achievements will be dynamically loaded -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" onclick="openActionModal('tree')">
+                            <span class="action-icon">🌳</span>
+                            <span class="action-title">Plant Trees</span>
+                            <span class="action-points">+50 pts</span>
+                        </button>
+                        <button class="action-btn" onclick="openActionModal('transport')">
+                            <span class="action-icon">🚌</span>
+                            <span class="action-title">Use Public Transport</span>
+                            <span class="action-points">+20 pts</span>
+                        </button>
+                        <button class="action-btn" onclick="openActionModal('energy')">
+                            <span class="action-icon">💡</span>
+                            <span class="action-title">Save Energy</span>
+                            <span class="action-points">+15 pts</span>
+                        </button>
+                        <button class="action-btn" onclick="openActionModal('recycle')">
+                            <span class="action-icon">♻️</span>
+                            <span class="action-title">Recycle Waste</span>
+                            <span class="action-points">+10 pts</span>
+                        </button>
+                        <button class="action-btn" onclick="openActionModal('carpool')">
+                            <span class="action-icon">🚗</span>
+                            <span class="action-title">Carpool</span>
+                            <span class="action-points">+25 pts</span>
+                        </button>
+                        <button class="action-btn" onclick="openActionModal('compost')">
+                            <span class="action-icon">🌿</span>
+                            <span class="action-title">Compost Organic Waste</span>
+                            <span class="action-points">+15 pts</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action History -->
+                <div class="action-history">
+                    <h3>Recent Actions</h3>
+                    <div id="actionHistoryList" class="action-history-list">
+                        <p class="empty-message">No actions recorded yet. Start taking climate actions!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Leaderboard Section -->
+            <section id="leaderboard" class="section">
+                <div class="section-header">
+                    <h2>🏆 Community Leaderboard</h2>
+                    <p>Top climate warriors in Nepal making a difference!</p>
+                </div>
+
+                <!-- Leaderboard Filters -->
+                <div class="leaderboard-filters">
+                    <button class="filter-btn active" data-filter="all">🌍 All Time</button>
+                    <button class="filter-btn" data-filter="month">📅 This Month</button>
+                    <button class="filter-btn" data-filter="week">📆 This Week</button>
+                </div>
+
+                <!-- Top 3 Podium -->
+                <div class="podium">
+                    <div class="podium-place second">
+                        <div class="podium-medal">🥈</div>
+                        <div class="podium-user" id="rank2">-</div>
+                        <div class="podium-points" id="rank2Points">0 pts</div>
+                    </div>
+                    <div class="podium-place first">
+                        <div class="podium-medal">🥇</div>
+                        <div class="podium-user" id="rank1">-</div>
+                        <div class="podium-points" id="rank1Points">0 pts</div>
+                    </div>
+                    <div class="podium-place third">
+                        <div class="podium-medal">🥉</div>
+                        <div class="podium-user" id="rank3">-</div>
+                        <div class="podium-points" id="rank3Points">0 pts</div>
+                    </div>
+                </div>
+
+                <!-- Full Leaderboard Table -->
+                <div class="leaderboard-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>District</th>
+                                <th>Points</th>
+                                <th>Trees</th>
+                                <th>CO₂ Saved</th>
+                                <th>Level</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <!-- Leaderboard entries will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Your Rank -->
+                <div class="your-rank" id="yourRank">
+                    <h4>Your Rank</h4>
+                    <p>Complete actions to appear on the leaderboard!</p>
+                </div>
+            </section>
+
+            <!-- Awareness Section -->
+            <section id="awareness" class="section">
+                <div class="section-header">
+                    <h2>🌏 Climate Awareness</h2>
+                    <p>Why Nepal needs urgent climate action</p>
+                </div>
+
+                <div class="awareness-grid">
+                    <div class="awareness-card">
+                        <div class="awareness-icon">🏔️</div>
+                        <h3>Himalayan Glaciers Melting</h3>
+                        <p>Nepal's glaciers are retreating at an alarming rate, threatening water security for millions. The Himalayas have lost 15% of their ice in the last 40 years.</p>
+                        <div class="fact-highlight">
+                            <strong>Impact:</strong> Water scarcity, increased flood risks
+                        </div>
+                    </div>
+
+                    <div class="awareness-card">
+                        <div class="awareness-icon">🌫️</div>
+                        <h3>Kathmandu Air Pollution</h3>
+                        <p>Kathmandu Valley ranks among the world's most polluted cities. Vehicle emissions and brick kilns are major contributors to poor air quality.</p>
+                        <div class="fact-highlight">
+                            <strong>Impact:</strong> 42,000+ premature deaths annually in Nepal
+                        </div>
+                    </div>
+
+                    <div class="awareness-card">
+                        <div class="awareness-icon">🌳</div>
+                        <h3>Deforestation Crisis</h3>
+                        <p>Despite forest conservation efforts, illegal logging and land conversion continue. Forests are crucial carbon sinks that we must protect.</p>
+                        <div class="fact-highlight">
+                            <strong>Solution:</strong> Community forestry & reforestation
+                        </div>
+                    </div>
+
+                    <div class="awareness-card">
+                        <div class="awareness-icon">⛽</div>
+                        <h3>Fossil Fuel Dependence</h3>
+                        <p>Nepal imports 100% of its petroleum products, spending billions annually. This creates both economic burden and environmental damage.</p>
+                        <div class="fact-highlight">
+                            <strong>Solution:</strong> Electric vehicles & hydropower expansion
+                        </div>
+                    </div>
+
+                    <div class="awareness-card">
+                        <div class="awareness-icon">🌾</div>
+                        <h3>Agriculture Under Threat</h3>
+                        <p>Unpredictable monsoons and extreme weather events threaten food security for Nepal's agricultural communities.</p>
+                        <div class="fact-highlight">
+                            <strong>Impact:</strong> Reduced crop yields, farmer migration
+                        </div>
+                    </div>
+
+                    <div class="awareness-card">
+                        <div class="awareness-icon">💡</div>
+                        <h3>Renewable Energy Potential</h3>
+                        <p>Nepal has massive hydropower potential (83,000 MW), but only 2% is currently utilized. Clean energy is our path forward!</p>
+                        <div class="fact-highlight">
+                            <strong>Opportunity:</strong> 100% clean electricity possible
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nepal-Specific Data -->
+                <div class="nepal-data">
+                    <h3>Nepal's Carbon Profile</h3>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <span class="data-label">Total CO₂ Emissions</span>
+                            <span class="data-value">9.5 MtCO₂e</span>
+                            <span class="data-note">Million metric tons annually</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Per Capita Emissions</span>
+                            <span class="data-value">0.51 tons</span>
+                            <span class="data-note">Among world's lowest</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Forest Coverage</span>
+                            <span class="data-value">44.7%</span>
+                            <span class="data-note">Increasing since 2000s</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Renewable Energy</span>
+                            <span class="data-value">92%</span>
+                            <span class="data-note">Mostly hydropower</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Tips -->
+                <div class="action-tips">
+                    <h3>How Individual Actions Matter</h3>
+                    <div class="tips-grid">
+                        <div class="tip-card">
+                            <span class="tip-number">1</span>
+                            <h4>Use Public Transport</h4>
+                            <p>Taking the bus instead of driving can reduce your transport emissions by 70%</p>
+                        </div>
+                        <div class="tip-card">
+                            <span class="tip-number">2</span>
+                            <h4>Save Electricity</h4>
+                            <p>Turn off lights and appliances when not in use. Use LED bulbs.</p>
+                        </div>
+                        <div class="tip-card">
+                            <span class="tip-number">3</span>
+                            <h4>Plant Trees</h4>
+                            <p>A single tree absorbs ~22 kg of CO₂ per year. Join local plantation drives!</p>
+                        </div>
+                        <div class="tip-card">
+                            <span class="tip-number">4</span>
+                            <h4>Reduce, Reuse, Recycle</h4>
+                            <p>Minimize waste and segregate properly. Compost organic waste.</p>
+                        </div>
+                        <div class="tip-card">
+                            <span class="tip-number">5</span>
+                            <h4>Go Electric</h4>
+                            <p>Consider electric vehicles. Nepal's hydropower makes them truly green!</p>
+                        </div>
+                        <div class="tip-card">
+                            <span class="tip-number">6</span>
+                            <h4>Spread Awareness</h4>
+                            <p>Share knowledge with family and friends. Collective action creates change!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Green Pledge Section -->
+            <section id="pledge" class="section">
+                <div class="section-header">
+                    <h2>🌱 Take the Green Nepal Pledge</h2>
+                    <p>Commit to reducing your carbon footprint</p>
+                </div>
+
+                <div class="pledge-container">
+                    <div class="pledge-content">
+                        <h3>The Green Nepal Pledge</h3>
+                        <p class="pledge-text">
+                            "I, a citizen of Nepal, pledge to reduce my carbon footprint and contribute to a sustainable future. 
+                            I commit to making conscious choices in transportation, energy use, and waste management. 
+                            I will spread awareness and inspire others to take climate action. 
+                            Together, we will protect our Himalayas and build a carbon-neutral Nepal."
+                        </p>
+
+                        <form id="pledgeForm" class="pledge-form">
+                            <div class="form-group">
+                                <label for="pledgeName">Your Name</label>
+                                <input type="text" id="pledgeName" required placeholder="Enter your name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pledgeDistrict">District</label>
+                                <select id="pledgeDistrict" required>
+                                    <option value="">Select District</option>
+                                    <option value="Kathmandu">Kathmandu</option>
+                                    <option value="Lalitpur">Lalitpur</option>
+                                    <option value="Bhaktapur">Bhaktapur</option>
+                                    <option value="Pokhara">Pokhara</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="pledgeAgree" required>
+                                    I agree to take the Green Nepal Pledge
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn-primary btn-large">
+                                🌱 Take the Pledge
+                            </button>
+                        </form>
+
+                        <div id="pledgeSuccess" class="pledge-success" style="display: none;">
+                            <div class="success-icon">✅</div>
+                            <h3>Thank You for Taking the Pledge!</h3>
+                            <p id="pledgeMessage"></p>
+                            <div class="pledge-certificate">
+                                <h4>Certificate of Commitment</h4>
+                                <p class="certificate-text">
+                                    This certifies that <strong id="certificateName"></strong> 
+                                    from <strong id="certificateDistrict"></strong> 
+                                    has pledged to reduce their carbon footprint on 
+                                    <strong id="certificateDate"></strong>
+                                </p>
+                                <button id="downloadCertificate" class="btn-secondary">
+                                    📜 Download Certificate
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pledge Counter -->
+                    <div class="pledge-stats">
+                        <h4>Community Impact</h4>
+                        <div class="pledge-counter">
+                            <span class="counter-number" id="pledgeCount">0</span>
+                            <span class="counter-label">Pledges Taken</span>
+                        </div>
+                        <p class="counter-note">Join the movement for a greener Nepal!</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://mofe.gov.np/" target="_blank">Ministry of Forests and Environment</a></li>
+                        <li><a href="https://www.nea.org.np/" target="_blank">Nepal Electricity Authority</a></li>
+                        <li><a href="https://www.aepc.gov.np/" target="_blank">Alternative Energy Promotion Centre</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Climate Action</h4>
+                    <ul>
+                        <li><a href="https://www.fecofun.org.np/" target="_blank">Community Forestry</a></li>
+                        <li><a href="https://cleanenergynepal.org/" target="_blank">Clean Energy Nepal</a></li>
+                        <li><a href="https://www.wwfnepal.org/" target="_blank">WWF Nepal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>About This App</h4>
+                    <p>A free tool to help Nepali citizens understand and reduce their carbon footprint. Built with Nepal-specific emission factors and local context.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Carbon Emission Control - Nepal. For a sustainable future. 🌱</p>
+                <p class="disclaimer">Emission calculations are estimates based on average factors. Actual emissions may vary.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Action Modal -->
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeActionModal()">&times;</span>
+            <h3 id="modalTitle">Log Your Action</h3>
+            <form id="actionForm">
+                <div class="form-group">
+                    <label id="modalLabel">Details</label>
+                    <input type="text" id="actionDetails" required placeholder="Describe your action">
+                </div>
+                <div class="form-group" id="quantityGroup" style="display: none;">
+                    <label id="quantityLabel">Quantity</label>
+                    <input type="number" id="actionQuantity" min="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="actionDate">Date</label>
+                    <input type="date" id="actionDate" required>
+                </div>
+                <button type="submit" class="btn-primary btn-large">Log Action & Earn Points</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeProfileModal()">&times;</span>
+            <h3>Edit Your Profile</h3>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="profileName">Name</label>
+                    <input type="text" id="profileName" required placeholder="Your Name">
+                </div>
+                <div class="form-group">
+                    <label for="profileDistrict">District</label>
+                    <select id="profileDistrict" required>
+                        <option value="">Select District</option>
+                        <option value="Kathmandu">Kathmandu</option>
+                        <option value="Lalitpur">Lalitpur</option>
+                        <option value="Bhaktapur">Bhaktapur</option>
+                        <option value="Pokhara">Pokhara</option>
+                        <option value="Chitwan">Chitwan</option>
+                        <option value="Biratnagar">Biratnagar</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="profileAvatar">Choose Avatar</label>
+                    <div class="avatar-selector">
+                        <span class="avatar-option" data-avatar="👤">👤</span>
+                        <span class="avatar-option" data-avatar="🌱">🌱</span>
+                        <span class="avatar-option" data-avatar="🌳">🌳</span>
+                        <span class="avatar-option" data-avatar="🦁">🦁</span>
+                        <span class="avatar-option" data-avatar="🐼">🐼</span>
+                        <span class="avatar-option" data-avatar="🦅">🦅</span>
+                        <span class="avatar-option" data-avatar="🐯">🐯</span>
+                        <span class="avatar-option" data-avatar="🌸">🌸</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary btn-large">Save Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
