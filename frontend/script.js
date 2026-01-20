@@ -139,9 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     
-    // ===================================
-    // ANIMATED PROGRESS BARS
-    // ===================================
     
     function animateProgressBars() {
         const progressBars = document.querySelectorAll('.challenge-fill, .xp-fill');
@@ -270,14 +267,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     
-    // ===================================
-    // BUTTON INTERACTIONS
-    // ===================================
-    
-    // Get Started / Start Your Journey buttons
     document.querySelectorAll('.primary-btn, .cta-btn').forEach(button => {
         button.addEventListener('click', function(e) {
-            // Create ripple effect
             const ripple = document.createElement('span');
             const rect = this.getBoundingClientRect();
             const size = Math.max(rect.width, rect.height);
@@ -295,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Alert for demo
             alert('🌱 Welcome to Carbon Karma! This is a demo interface. Connect to your backend API to unlock full functionality.');
-        });
+        }); 
     });
     
     // Redeem buttons
