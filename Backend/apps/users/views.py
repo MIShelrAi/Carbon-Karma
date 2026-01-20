@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 """
 Views for User app
 """
-=======
->>>>>>> b8634cd14c2944455cd509ed0f0c2c645c05c51c
-=======
->>>>>>> b8634cd14c2944455cd509ed0f0c2c645c05c51c
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -21,14 +15,12 @@ from .serializers import (
     UserStatsSerializer,
     ChangePasswordSerializer
 )
-<<<<<<< HEAD
-<<<<<<< HEAD
+from backend.apps.users import models
 
 User = get_user_model()
 
 class UserRegistrationView(generics.CreateAPIView):
     """
-    POST /api/users/register/
     Register a new user
     """
     queryset = User.objects.all()
@@ -40,7 +32,6 @@ class UserRegistrationView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         
-        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         
         return Response({
@@ -54,7 +45,6 @@ class UserRegistrationView(generics.CreateAPIView):
 
 class UserProfileView(generics.RetrieveAPIView):
     """
-    GET /api/users/profile/
     Get current user's profile
     """
     serializer_class = UserProfileSerializer
@@ -65,7 +55,6 @@ class UserProfileView(generics.RetrieveAPIView):
 
 class UserProfileUpdateView(generics.UpdateAPIView):
     """
-    PUT/PATCH /api/users/profile/update/
     Update current user's profile
     """
     serializer_class = UserProfileUpdateSerializer
@@ -81,13 +70,11 @@ class UserProfileUpdateView(generics.UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         
-        # Return full profile after update
         profile_serializer = UserProfileSerializer(instance)
         return Response(profile_serializer.data)
 
 class UserStatsView(generics.RetrieveAPIView):
     """
-    GET /api/users/stats/
     Get current user's stats summary
     """
     serializer_class = UserStatsSerializer
@@ -98,7 +85,6 @@ class UserStatsView(generics.RetrieveAPIView):
 
 class ChangePasswordView(generics.UpdateAPIView):
     """
-    PUT /api/users/change-password/
     Change user password
     """
     serializer_class = ChangePasswordSerializer
@@ -114,7 +100,6 @@ class ChangePasswordView(generics.UpdateAPIView):
         )
         serializer.is_valid(raise_exception=True)
         
-        # Set new password
         user = self.get_object()
         user.set_password(serializer.validated_data['new_password'])
         user.save()
@@ -127,7 +112,6 @@ class ChangePasswordView(generics.UpdateAPIView):
 @permission_classes([IsAuthenticated])
 def user_dashboard_stats(request):
     """
-    GET /api/users/dashboard-stats/
     Get comprehensive dashboard statistics for the user
     """
     user = request.user
@@ -174,7 +158,6 @@ def user_dashboard_stats(request):
 @permission_classes([IsAuthenticated])
 def delete_account(request):
     """
-    DELETE /api/users/delete-account/
     Delete user account (requires password confirmation)
     """
     password = request.data.get('password')
@@ -199,11 +182,3 @@ def delete_account(request):
         {'message': 'Account deleted successfully.'},
         status=status.HTTP_200_OK
     )
-=======
-# Create your views here.
-
->>>>>>> b8634cd14c2944455cd509ed0f0c2c645c05c51c
-=======
-# Create your views here.
-
->>>>>>> b8634cd14c2944455cd509ed0f0c2c645c05c51c
