@@ -371,3 +371,14 @@ body {
         font-size: 28px;
     }
 }
+.return{
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+.return a{
+    color: var(--text-secondary);
+    text-decoration: none;
+}

@@ -16,5 +16,5 @@ urlpatterns = [
     
     # Leaderboards
     path('global/', views.global_leaderboard, name='global-leaderboard'),
-    path('teams-ranking/', views.team_leaderboard, name='team-leaderboard'),
+    # path('teams-ranking/', views.team_leaderboard, name='team-leaderboard'),  # Commented out - function missing
 ]

@@ -37,7 +37,7 @@
             </a>
         </nav>
         <div class="sidebar-footer">
-            <button class="logout-btn">🚪 Logout</button>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </aside>
 
@@ -46,10 +46,21 @@
         <!-- Header -->
         <header class="top-bar">
             <div class="user-actions">
-                <button class="notification-btn">🔔</button>
+                <button class="notification-btn" onclick="toggleNotifications()">🔔 <span class="notification-badge" style="display: none;"></span></button>
                 <div class="user-avatar">👤</div>
             </div>
         </header>
+
+        <!-- Notifications Dropdown -->
+        <div id="notificationsDropdown" class="notifications-dropdown" style="display: none;">
+            <div class="notifications-header">
+                <h4>Notifications</h4>
+                <button onclick="markAllNotificationsRead()">Mark all read</button>
+            </div>
+            <div id="notificationsList" class="notifications-list">
+                <!-- Notifications will be loaded here -->
+            </div>
+        </div>
 
         <!-- Dashboard Stats Overview -->
         <section class="stats-overview">
@@ -589,58 +600,8 @@
                 <!-- Available Challenges -->
                 <div class="challenges-section">
                     <h3>💼 Available Challenges</h3>
-                    <div class="challenges-list">
-                        <div class="challenge-item">
-                            <span class="challenge-icon">🚴</span>
-                            <div class="challenge-info">
-                                <h4>Bike Commute</h4>
-                                <p>Cycle to work 3 times this week</p>
-                            </div>
-                            <div class="challenge-meta">
-                                <span class="difficulty easy">Easy</span>
-                                <span class="reward">150 pts</span>
-                            </div>
-                            <button class="start-challenge-btn">Start</button>
-                        </div>
-
-                        <div class="challenge-item">
-                            <span class="challenge-icon">♻️</span>
-                            <div class="challenge-info">
-                                <h4>Zero Waste Weekend</h4>
-                                <p>Produce no non-recyclable waste for 2 days</p>
-                            </div>
-                            <div class="challenge-meta">
-                                <span class="difficulty medium">Medium</span>
-                                <span class="reward">250 pts</span>
-                            </div>
-                            <button class="start-challenge-btn">Start</button>
-                        </div>
-
-                        <div class="challenge-item">
-                            <span class="challenge-icon">🌳</span>
-                            <div class="challenge-info">
-                                <h4>Tree Planter</h4>
-                                <p>Plant 5 trees in your community</p>
-                            </div>
-                            <div class="challenge-meta">
-                                <span class="difficulty hard">Hard</span>
-                                <span class="reward">500 pts</span>
-                            </div>
-                            <button class="start-challenge-btn">Start</button>
-                        </div>
-
-                        <div class="challenge-item">
-                            <span class="challenge-icon">🏠</span>
-                            <div class="challenge-info">
-                                <h4>Home Energy Audit</h4>
-                                <p>Complete a full home energy assessment</p>
-                            </div>
-                            <div class="challenge-meta">
-                                <span class="difficulty medium">Medium</span>
-                                <span class="reward">200 pts</span>
-                            </div>
-                            <button class="start-challenge-btn">Start</button>
-                        </div>
+                    <div id="challengesList" class="challenges-list">
+                        <!-- Challenges will be loaded here -->
                     </div>
                 </div>
 
@@ -692,6 +653,14 @@
                     </div>
                 </div>
 
+                <!-- Rewards -->
+                <div class="rewards-section">
+                    <h3>🎁 Available Rewards</h3>
+                    <div id="rewardsList" class="rewards-grid">
+                        <!-- Rewards will be loaded here -->
+                    </div>
+                </div>
+
                 <!-- Leaderboard -->
                 <div class="leaderboard-section">
                     <h3>🥇 Global Leaderboard</h3>
@@ -711,35 +680,8 @@
                                     <th>CO₂ Saved</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="rank">🥇 1</td>
-                                    <td>EcoWarrior42</td>
-                                    <td>Level 12</td>
-                                    <td>5,420</td>
-                                    <td>2,500 kg</td>
-                                </tr>
-                                <tr>
-                                    <td class="rank">🥈 2</td>
-                                    <td>GreenLiving</td>
-                                    <td>Level 10</td>
-                                    <td>4,850</td>
-                                    <td>2,100 kg</td>
-                                </tr>
-                                <tr>
-                                    <td class="rank">🥉 3</td>
-                                    <td>ClimateChamp</td>
-                                    <td>Level 9</td>
-                                    <td>3,990</td>
-                                    <td>1,800 kg</td>
-                                </tr>
-                                <tr class="your-rank">
-                                    <td class="rank">15</td>
-                                    <td>You</td>
-                                    <td>Level 5</td>
-                                    <td>1,250</td>
-                                    <td>650 kg</td>
-                                </tr>
+                            <tbody id="leaderboardList">
+                                <!-- Leaderboard will be loaded here -->
                             </tbody>
                         </table>
                     </div>

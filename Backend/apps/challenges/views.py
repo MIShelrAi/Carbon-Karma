@@ -21,7 +21,7 @@ class ChallengeListView(generics.ListAPIView):
     List all active challenges
     """
     serializer_class = ChallengeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []  # Allow public access
     
     def get_queryset(self):
         queryset = Challenge.objects.filter(is_active=True)

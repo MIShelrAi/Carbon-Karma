@@ -20,7 +20,7 @@ class RewardListView(generics.ListAPIView):
     List all available rewards
     """
     serializer_class = RewardSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []  # Allow public access
     
     def get_queryset(self):
         queryset = Reward.objects.filter(is_active=True, available_in_nepal=True)

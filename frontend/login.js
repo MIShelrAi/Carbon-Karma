@@ -102,7 +102,9 @@ primaryButtons.forEach(button => {
 const loginForm = document.getElementById('loginForm');
 const signupForm = document.getElementById('signupForm');
 
-loginForm.addEventListener('submit', (e) => {
+const API_BASE_URL = 'http://localhost:8000/api';
+
+loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const email = document.getElementById('loginEmail').value;
@@ -115,19 +117,43 @@ loginForm.addEventListener('submit', (e) => {
     submitBtn.style.opacity = '0.7';
     submitBtn.style.pointerEvents = 'none';
     
-    // Simulate API call
-    setTimeout(() => {
-        console.log('Login:', { email, password });
+    try {
+        const response = await fetch(`${API_BASE_URL}/token/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: email, // Django expects 'username' field
+                password: password,
+            }),
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Store tokens in localStorage
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+            
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        } else {
+            // Handle error
+            alert(data.detail || 'Login failed. Please check your credentials.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Network error. Please try again.');
+    } finally {
+        // Reset button state
         submitBtn.querySelector('span').textContent = originalText;
         submitBtn.style.opacity = '1';
         submitBtn.style.pointerEvents = 'auto';
-        
-        // You would handle actual authentication here
-        alert('Login functionality would be implemented here');
-    }, 1500);
+    }
 });
 
-signupForm.addEventListener('submit', (e) => {
+signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const name = document.getElementById('signupName').value;
@@ -147,16 +173,47 @@ signupForm.addEventListener('submit', (e) => {
     submitBtn.style.opacity = '0.7';
     submitBtn.style.pointerEvents = 'none';
     
-    // Simulate API call
-    setTimeout(() => {
-        console.log('Signup:', { name, email, password });
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/register/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: email, // Use email as username
+                email: email,
+                password: password,
+                password2: password,
+                first_name: name.split(' ')[0] || name,
+                last_name: name.split(' ').slice(1).join(' ') || '',
+            }),
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Store tokens in localStorage
+            localStorage.setItem('access_token', data.tokens.access);
+            localStorage.setItem('refresh_token', data.tokens.refresh);
+            
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        } else {
+            // Handle error
+            const errorMessage = data.email ? data.email[0] : 
+                               data.password ? data.password[0] : 
+                               data.detail || 'Registration failed. Please try again.';
+            alert(errorMessage);
+        }
+    } catch (error) {
+        console.error('Signup error:', error);
+        alert('Network error. Please try again.');
+    } finally {
+        // Reset button state
         submitBtn.querySelector('span').textContent = originalText;
         submitBtn.style.opacity = '1';
         submitBtn.style.pointerEvents = 'auto';
-        
-        // You would handle actual registration here
-        alert('Signup functionality would be implemented here');
-    }, 1500);
+    }
 });
 
 // Google sign-in buttons

@@ -18,11 +18,56 @@ document.querySelectorAll('.nav-item').forEach(item => {
     });
 });
 
+// Logout functionality
+document.querySelector('.logout-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    logout();
+});
+
+function logout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    window.location.href = 'login.html';
+}
+
+// Make functions global for onclick handlers
+window.joinChallenge = joinChallenge;
+window.redeemReward = redeemReward;
+window.toggleNotifications = toggleNotifications;
+window.markAllNotificationsRead = markAllNotificationsRead;
+
+// API helper function
+function apiRequest(url, options = {}) {
+    const token = localStorage.getItem('access_token');
+    const defaultOptions = {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    };
+    
+    return fetch(`http://localhost:8000/api${url}`, { ...defaultOptions, ...options });
+}
+
+// Check authentication on page load
+document.addEventListener('DOMContentLoaded', () => {
+    if (!checkAuth()) return;
+    
+    // Load user data
+    loadUserProfile();
+    loadDashboardStats();
+    loadChallenges();
+    loadLeaderboard();
+    loadRewards();
+    loadActivityHistory();
+    loadNotifications();
+});
+
 // Carbon Calculator
 const carbonForm = document.getElementById('carbonCalculatorForm');
 const resultsContainer = document.getElementById('calculationResults');
 
-carbonForm.addEventListener('submit', (e) => {
+carbonForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     // Get form values
@@ -46,6 +91,9 @@ carbonForm.addEventListener('submit', (e) => {
     
     // Display results
     displayResults(emissions);
+    
+    // Save activities to backend
+    await saveActivitiesToBackend(formData, emissions);
     
     // Show results container
     resultsContainer.style.display = 'block';
@@ -166,6 +214,137 @@ function updateComparison(annualTons) {
         comparisonText.textContent = '⚠️ Your footprint is above average. Consider implementing reduction strategies.';
         comparisonText.style.color = '#e74c3c';
     }
+}
+
+// Save activities to backend
+async function saveActivitiesToBackend(formData, emissions) {
+    const activities = [];
+
+    // Transportation activities
+    if (formData.carKm > 0) {
+        activities.push({
+            activity_type: 'transport',
+            transport_mode: 'car',
+            distance_km: formData.carKm,
+            description: `Car travel: ${formData.carKm} km`,
+            co2_impact: formData.carKm * 0.12
+        });
+    }
+
+    if (formData.bikeKm > 0) {
+        activities.push({
+            activity_type: 'transport',
+            transport_mode: 'bicycle',
+            distance_km: formData.bikeKm,
+            description: `Bicycle travel: ${formData.bikeKm} km`,
+            co2_impact: formData.bikeKm * 0.06
+        });
+    }
+
+    if (formData.publicTransport > 0) {
+        activities.push({
+            activity_type: 'transport',
+            transport_mode: 'public_transport',
+            distance_km: formData.publicTransport,
+            description: `Public transport: ${formData.publicTransport} km`,
+            co2_impact: formData.publicTransport * 0.03
+        });
+    }
+
+    if (formData.flights > 0) {
+        activities.push({
+            activity_type: 'transport',
+            transport_mode: 'flight',
+            distance_km: formData.flights * 800, // Approximate km per flight hour
+            description: `Flights: ${formData.flights} hours`,
+            co2_impact: formData.flights * 90
+        });
+    }
+
+    // Energy activities
+    if (formData.electricity > 0) {
+        const factor = formData.renewableEnergy ? 0.1 : 0.5;
+        activities.push({
+            activity_type: 'energy',
+            energy_type: 'electricity',
+            energy_saved_kwh: formData.electricity,
+            description: `Electricity usage: ${formData.electricity} kWh`,
+            co2_impact: formData.electricity * factor
+        });
+    }
+
+    if (formData.naturalGas > 0) {
+        activities.push({
+            activity_type: 'energy',
+            energy_type: 'natural_gas',
+            energy_saved_kwh: formData.naturalGas,
+            description: `Natural gas: ${formData.naturalGas} m³`,
+            co2_impact: formData.naturalGas * 2.0
+        });
+    }
+
+    if (formData.heating > 0) {
+        activities.push({
+            activity_type: 'energy',
+            energy_type: 'heating',
+            energy_saved_kwh: formData.heating,
+            description: `Heating: ${formData.heating} liters`,
+            co2_impact: formData.heating * 2.6
+        });
+    }
+
+    // Lifestyle activities
+    activities.push({
+        activity_type: 'food',
+        meal_type: formData.diet,
+        servings: 30, // Monthly servings
+        description: `Diet: ${formData.diet}`,
+        co2_impact: getDietEmissions(formData.diet)
+    });
+
+    if (formData.shopping > 0) {
+        activities.push({
+            activity_type: 'shopping',
+            description: `Shopping: $${formData.shopping}`,
+            co2_impact: formData.shopping * 0.5
+        });
+    }
+
+    if (formData.waste > 0) {
+        activities.push({
+            activity_type: 'waste',
+            weight_kg: formData.waste,
+            description: `Waste: ${formData.waste} kg`,
+            co2_impact: formData.waste * 0.5 * 4
+        });
+    }
+
+    // Save each activity
+    for (const activity of activities) {
+        try {
+            await apiRequest('/tracking/activities/', {
+                method: 'POST',
+                body: JSON.stringify(activity)
+            });
+        } catch (error) {
+            console.error('Failed to save activity:', activity, error);
+        }
+    }
+
+    // Reload dashboard stats after saving
+    loadDashboardStats();
+    loadActivityHistory();
+}
+
+function getDietEmissions(diet) {
+    const dietEmissions = {
+        'meat-heavy': 150,
+        'average': 100,
+        'low-meat': 70,
+        'vegetarian': 50,
+        'vegan': 30
+    };
+    return dietEmissions[diet] || 100;
 }
 
 // Save Calculation to History
@@ -699,6 +878,394 @@ document.querySelector('.export-btn')?.addEventListener('click', () => {
     link.href = url;
     link.download = 'carbon-footprint-history.json';
     link.click();
+});
+
+// Load user profile
+async function loadUserProfile() {
+    try {
+        const response = await apiRequest('/users/profile/');
+        if (response.ok) {
+            const data = await response.json();
+            // Update user name in the UI if there's a welcome message
+            const userNameElement = document.querySelector('.user-name');
+            if (userNameElement && data.name) {
+                userNameElement.textContent = `Welcome, ${data.name}!`;
+            }
+            
+            // Update dashboard stats
+            updateDashboardStats(data);
+        }
+    } catch (error) {
+        console.error('Failed to load user profile:', error);
+    }
+}
+
+// Update dashboard stats cards
+function updateDashboardStats(userData) {
+    // Update total emissions (this would come from activity aggregation)
+    const totalEmissionsElement = document.getElementById('totalEmissions');
+    if (totalEmissionsElement) {
+        // This would need to be calculated from user's activities
+        totalEmissionsElement.textContent = 'Loading...';
+    }
+    
+    // Update eco points
+    const ecoPointsElement = document.getElementById('ecoPoints');
+    if (ecoPointsElement && userData.total_points) {
+        ecoPointsElement.textContent = userData.total_points.toLocaleString();
+    }
+}
+
+// Load dashboard stats
+async function loadDashboardStats() {
+    try {
+        const response = await apiRequest('/users/dashboard-stats/');
+        if (response.ok) {
+            const data = await response.json();
+            // Update dashboard with real data
+            updateDashboardWithStats(data);
+        }
+    } catch (error) {
+        console.error('Failed to load dashboard stats:', error);
+    }
+}
+
+// Update dashboard with API data
+function updateDashboardWithStats(data) {
+    // Update weekly stats if elements exist
+    const weeklyActivities = document.querySelector('.weekly-activities');
+    const weeklyCO2 = document.querySelector('.weekly-co2');
+    const activeChallenges = document.querySelector('.active-challenges');
+    
+    if (weeklyActivities && data.weekly_stats) {
+        weeklyActivities.textContent = data.weekly_stats.activities_count;
+    }
+    if (weeklyCO2 && data.weekly_stats) {
+        weeklyCO2.textContent = `${data.weekly_stats.co2_saved} kg`;
+    }
+    if (activeChallenges) {
+        activeChallenges.textContent = data.active_challenges_count;
+    }
+}
+
+// Load challenges
+async function loadChallenges() {
+    try {
+        const response = await apiRequest('/challenges/');
+        if (response.ok) {
+            const challenges = await response.json();
+            displayChallenges(challenges.results || challenges);
+        }
+    } catch (error) {
+        console.error('Failed to load challenges:', error);
+    }
+}
+
+// Display challenges
+function displayChallenges(challenges) {
+    const container = document.getElementById('challengesList');
+    if (!container) return;
+
+    container.innerHTML = challenges.map(challenge => `
+        <div class="challenge-item">
+            <span class="challenge-icon">${getChallengeIcon(challenge.category)}</span>
+            <div class="challenge-info">
+                <h4>${challenge.title}</h4>
+                <p>${challenge.description}</p>
+            </div>
+            <div class="challenge-meta">
+                <span class="difficulty ${getDifficultyClass(challenge.difficulty_level)}">${challenge.difficulty_level}</span>
+                <span class="reward">${challenge.points_reward} pts</span>
+            </div>
+            <button class="start-challenge-btn" onclick="joinChallenge(${challenge.id})">Join</button>
+        </div>
+    `).join('');
+}
+
+function getChallengeIcon(category) {
+    const icons = {
+        'transport': '🚗',
+        'energy': '⚡',
+        'food': '🍽️',
+        'waste': '♻️',
+        'lifestyle': '🏠'
+    };
+    return icons[category] || '🎯';
+}
+
+function getDifficultyClass(difficulty) {
+    const classes = {
+        'easy': 'easy',
+        'medium': 'medium',
+        'hard': 'hard'
+    };
+    return classes[difficulty.toLowerCase()] || 'medium';
+}
+
+// Join challenge
+async function joinChallenge(challengeId) {
+    try {
+        const response = await apiRequest(`/challenges/${challengeId}/join/`, {
+            method: 'POST'
+        });
+        if (response.ok) {
+            alert('Successfully joined challenge!');
+            loadChallenges();
+            loadDashboardStats();
+        } else {
+            const error = await response.json();
+            alert(error.detail || 'Failed to join challenge');
+        }
+    } catch (error) {
+        console.error('Failed to join challenge:', error);
+        alert('Failed to join challenge');
+    }
+}
+
+// Load leaderboard
+async function loadLeaderboard() {
+    try {
+        const response = await apiRequest('/leaderboard/global/');
+        if (response.ok) {
+            const leaderboard = await response.json();
+            displayLeaderboard(leaderboard);
+        }
+    } catch (error) {
+        console.error('Failed to load leaderboard:', error);
+    }
+}
+
+// Display leaderboard
+function displayLeaderboard(data) {
+    const container = document.getElementById('leaderboardList');
+    if (!container) return;
+
+    const rankings = data.results || data;
+    container.innerHTML = rankings.slice(0, 10).map((user, index) => {
+        const rank = index + 1;
+        const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank.toString();
+        const isCurrentUser = user.is_current_user;
+        
+        return `
+            <tr class="${isCurrentUser ? 'your-rank' : ''}">
+                <td class="rank">${rankIcon} ${rank}</td>
+                <td>${user.name || user.username}</td>
+                <td>Level ${Math.floor(user.total_points / 100) + 1}</td>
+                <td>${user.total_points || 0}</td>
+                <td>${user.total_co2_saved || 0} kg</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Load rewards
+async function loadRewards() {
+    try {
+        const response = await apiRequest('/rewards/');
+        if (response.ok) {
+            const rewards = await response.json();
+            displayRewards(rewards.results || rewards);
+        }
+    } catch (error) {
+        console.error('Failed to load rewards:', error);
+    }
+}
+
+// Display rewards
+function displayRewards(rewards) {
+    const container = document.getElementById('rewardsList');
+    if (!container) return;
+
+    container.innerHTML = rewards.map(reward => `
+        <div class="reward-card">
+            <div class="reward-icon">${getRewardIcon(reward.category)}</div>
+            <h4>${reward.name}</h4>
+            <p>${reward.description}</p>
+            <div class="reward-cost">${reward.points_cost} points</div>
+            <button class="btn btn-primary" onclick="redeemReward(${reward.id})">Redeem</button>
+        </div>
+    `).join('');
+}
+
+function getRewardIcon(category) {
+    const icons = {
+        'discount': '💰',
+        'product': '📦',
+        'service': '🛍️',
+        'donation': '🌳'
+    };
+    return icons[category] || '🎁';
+}
+
+// Redeem reward
+async function redeemReward(rewardId) {
+    try {
+        const response = await apiRequest('/rewards/redeem/', {
+            method: 'POST',
+            body: JSON.stringify({ reward_id: rewardId })
+        });
+        if (response.ok) {
+            alert('Reward redeemed successfully!');
+            loadRewards();
+            loadUserProfile();
+        } else {
+            const error = await response.json();
+            alert(error.detail || 'Failed to redeem reward');
+        }
+    } catch (error) {
+        console.error('Failed to redeem reward:', error);
+        alert('Failed to redeem reward');
+    }
+}
+
+// Load activity history
+async function loadActivityHistory() {
+    try {
+        const response = await apiRequest('/tracking/activities/');
+        if (response.ok) {
+            const activities = await response.json();
+            displayActivityHistory(activities.results || activities);
+        }
+    } catch (error) {
+        console.error('Failed to load activity history:', error);
+    }
+}
+
+// Display activity history
+function displayActivityHistory(activities) {
+    const container = document.getElementById('historyTableBody');
+    if (!container) return;
+
+    if (activities.length === 0) {
+        container.innerHTML = '<tr class="empty-state"><td colspan="6">No activities yet. Start by calculating your carbon footprint!</td></tr>';
+        return;
+    }
+
+    container.innerHTML = activities.map(activity => `
+        <tr>
+            <td>${new Date(activity.timestamp).toLocaleDateString()}</td>
+            <td>${activity.co2_impact} kg CO₂</td>
+            <td>${activity.activity_type === 'transport' ? activity.co2_impact : '-'}</td>
+            <td>${activity.activity_type === 'energy' ? activity.co2_impact : '-'}</td>
+            <td>${activity.activity_type === 'food' || activity.activity_type === 'waste' ? activity.co2_impact : '-'}</td>
+            <td><button class="btn btn-sm" onclick="viewActivity(${activity.id})">View</button></td>
+        </tr>
+    `).join('');
+}
+
+// Load notifications
+async function loadNotifications() {
+    try {
+        const response = await apiRequest('/gamification/notifications/');
+        if (response.ok) {
+            const notifications = await response.json();
+            displayNotifications(notifications.results || notifications);
+        }
+    } catch (error) {
+        console.error('Failed to load notifications:', error);
+    }
+}
+
+// Display notifications
+function displayNotifications(notifications) {
+    const container = document.getElementById('notificationsList');
+    if (!container) return;
+
+    const unreadCount = notifications.filter(n => !n.is_read).length;
+    const badge = document.querySelector('.notification-badge');
+    if (badge) {
+        badge.textContent = unreadCount;
+        badge.style.display = unreadCount > 0 ? 'block' : 'none';
+    }
+
+    container.innerHTML = notifications.slice(0, 10).map(notification => `
+        <div class="notification-item ${!notification.is_read ? 'unread' : ''}" onclick="markNotificationRead(${notification.id})">
+            <div class="notification-content">
+                <div class="notification-title">${notification.title}</div>
+                <div class="notification-message">${notification.message}</div>
+                <div class="notification-time">${new Date(notification.created_at).toLocaleDateString()}</div>
+            </div>
+            ${!notification.is_read ? '<div class="unread-indicator"></div>' : ''}
+        </div>
+    `).join('');
+}
+
+// Toggle notifications dropdown
+function toggleNotifications() {
+    const dropdown = document.getElementById('notificationsDropdown');
+    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+        dropdown.style.display = 'block';
+        loadNotifications(); // Refresh notifications when opening
+    } else {
+        dropdown.style.display = 'none';
+    }
+}
+
+// Mark notification as read
+async function markNotificationRead(notificationId) {
+    try {
+        await apiRequest(`/gamification/notifications/${notificationId}/read/`, {
+            method: 'POST'
+        });
+        loadNotifications(); // Refresh the list
+    } catch (error) {
+        console.error('Failed to mark notification as read:', error);
+    }
+}
+
+// Mark all notifications as read
+async function markAllNotificationsRead() {
+    try {
+        await apiRequest('/gamification/notifications/read-all/', {
+            method: 'POST'
+        });
+        loadNotifications(); // Refresh the list
+    } catch (error) {
+        console.error('Failed to mark all notifications as read:', error);
+    }
+}
+
+// Popup message functionality
+function showPopupMessage(message) {
+    // Remove existing popup if any
+    const existingPopup = document.querySelector('.popup-message');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    // Create popup element
+    const popup = document.createElement('div');
+    popup.className = 'popup-message';
+    popup.textContent = message;
+
+    // Add to body
+    document.body.appendChild(popup);
+
+    // Show popup
+    setTimeout(() => popup.classList.add('show'), 10);
+
+    // Hide popup after 3 seconds
+    setTimeout(() => {
+        popup.classList.remove('show');
+        setTimeout(() => popup.remove(), 300);
+    }, 3000);
+}
+
+// Add event listeners for offset and subscribe buttons
+document.addEventListener('DOMContentLoaded', () => {
+    // Offset buttons
+    document.querySelectorAll('.offset-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            showPopupMessage('Added to cart! 🌳');
+        });
+    });
+
+    // Subscribe buttons
+    document.querySelectorAll('.subscribe-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            showPopupMessage('Added to cart! 📦');
+        });
+    });
 });
 
 console.log('Dashboard loaded successfully! 🌍');

@@ -221,8 +221,75 @@ def global_leaderboard(request):
     })
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def team_leaderboard(request):
+@permission_classes([])  # Allow public access
+def global_leaderboard(request):
+    """
+    GET /api/leaderboard/global/
+    Get global user leaderboard
+    """
+    limit = int(request.query_params.get('limit', 50))
+    timeframe = request.query_params.get('timeframe', 'all')  # all, month, week
+    metric = request.query_params.get('metric', 'points')  # points, co2_saved, streak
+    
+    # Base queryset
+    users = User.objects.all()
+    
+    # Apply timeframe filter if needed
+    if timeframe == 'month':
+        start_date = timezone.now() - timedelta(days=30)
+        # For monthly, we'd need activity tracking, for now just return all
+    elif timeframe == 'week':
+        start_date = timezone.now() - timedelta(days=7)
+        # For weekly, we'd need activity tracking, for now just return all
+    
+    # Order by selected metric
+    if metric == 'points':
+        users = users.order_by('-carbon_points')
+    elif metric == 'co2_saved':
+        users = users.order_by('-total_co2_saved')
+    elif metric == 'streak':
+        users = users.order_by('-current_streak')
+    
+    users = users[:limit]
+    
+    leaderboard_data = []
+    for rank, user in enumerate(users, start=1):
+        leaderboard_data.append({
+            'rank': rank,
+            'user_id': user.id,
+            'name': user.get_full_name() or user.username,
+            'username': user.username,
+            'avatar': getattr(user, 'avatar', None),
+            'total_points': user.carbon_points,
+            'total_co2_saved': round(user.total_co2_saved, 2),
+            'current_streak': user.current_streak,
+            'level': getattr(user, 'level', 1),
+            'is_current_user': user.id == request.user.id
+        })
+    
+    # Find current user's rank
+    user_rank = None
+    for entry in leaderboard_data:
+        if entry['user_id'] == request.user.id:
+            user_rank = entry['rank']
+            break
+    
+    if user_rank is None:
+        # User not in top limit, calculate their rank
+        if metric == 'points':
+            user_rank = User.objects.filter(carbon_points__gt=request.user.carbon_points).count() + 1
+        elif metric == 'co2_saved':
+            user_rank = User.objects.filter(total_co2_saved__gt=request.user.total_co2_saved).count() + 1
+        elif metric == 'streak':
+            user_rank = User.objects.filter(current_streak__gt=request.user.current_streak).count() + 1
+    
+    return Response({
+        'results': leaderboard_data,
+        'your_rank': user_rank,
+        'total_users': User.objects.count(),
+        'timeframe': timeframe,
+        'metric': metric
+    })
     """
     GET /api/leaderboard/teams-ranking/
     Get team leaderboard
