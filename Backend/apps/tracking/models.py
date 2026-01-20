@@ -4,6 +4,8 @@ Tracking models for Carbon Karma
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.conf import settings
+from django.db import models
 
 class Activity(models.Model):
     """Model for tracking individual carbon activities"""
@@ -57,10 +59,11 @@ class Activity(models.Model):
     ]
     
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='activities'
-    )
+    settings.AUTH_USER_MODEL,
+    on_delete=models.CASCADE,
+    related_name='activities'
+)
+
     activity_type = models.CharField(max_length=20, choices=ACTIVITY_TYPES)
     
     # Transport specific fields

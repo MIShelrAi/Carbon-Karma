@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+    
 
 app_name = 'users'
 
@@ -24,4 +25,9 @@ urlpatterns = [
     # Account Management
     path('change-password/', views.ChangePasswordView.as_view(), name='change-password'),
     path('delete-account/', views.delete_account, name='delete-account'),
+
+    #api url
+    path('register/', views.RegisterView.as_view(), name='register'),
+    path('me/', views.UserProfileView.as_view(), name='user-profile'),
+
 ]

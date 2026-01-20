@@ -34,13 +34,13 @@ INSTALLED_APPS = [
     'django_filters',
     
     # Local apps
-    'apps.users',
-    'apps.tracking',
-    'apps.gamification',
-    'apps.challenges',
-    'apps.leaderboard',
-    'apps.rewards',
-    'apps.emissions',
+    'apps.users.apps.UsersConfig',
+    'apps.tracking.apps.TrackingConfig',
+    'apps.gamification.apps.GamificationConfig',
+    'apps.challenges.apps.ChallengesConfig',
+    'apps.leaderboard.apps.LeaderboardConfig',
+    'apps.rewards.apps.RewardsConfig',
+    'apps.emissions.apps.EmissionsConfig',
 ]
 
 MIDDLEWARE = [
@@ -87,7 +87,7 @@ DATABASES = {
 }
 
 # Custom User Model
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'apps_users.User'
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
