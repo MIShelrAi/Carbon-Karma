@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
 
 from .serializers import (
     UserRegistrationSerializer,
@@ -15,7 +16,6 @@ from .serializers import (
     UserStatsSerializer,
     ChangePasswordSerializer
 )
-from backend.apps.users import models
 
 User = get_user_model()
 
@@ -134,7 +134,7 @@ def user_dashboard_stats(request):
         timestamp__date__gte=week_ago,
         co2_impact__gt=0
     ).aggregate(
-        total=models.Sum('co2_impact')
+        total=Sum('co2_impact')
     )['total'] or 0
     
     # Get active challenges count
@@ -182,3 +182,4 @@ def delete_account(request):
         {'message': 'Account deleted successfully.'},
         status=status.HTTP_200_OK
     )
+
