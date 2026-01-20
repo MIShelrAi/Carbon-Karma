@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 """
 Views for User app
 """
+=======
+>>>>>>> b8634cd14c2944455cd509ed0f0c2c645c05c51c
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -15,6 +18,7 @@ from .serializers import (
     UserStatsSerializer,
     ChangePasswordSerializer
 )
+<<<<<<< HEAD
 
 User = get_user_model()
 
@@ -191,3 +195,7 @@ def delete_account(request):
         {'message': 'Account deleted successfully.'},
         status=status.HTTP_200_OK
     )
+=======
+# Create your views here.
+
+>>>>>>> b8634cd14c2944455cd509ed0f0c2c645c05c51c
