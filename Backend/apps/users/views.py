@@ -7,8 +7,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
-from backend.apps.users import models
-from apps.challenges.models import ChallengeParticipation
 
 from .serializers import (
     UserRegistrationSerializer,
@@ -148,6 +146,7 @@ def user_dashboard_stats(request):
     )['total'] or 0
     
     # Get active challenges count
+    from apps.challenges.models import ChallengeParticipation
     active_challenges = ChallengeParticipation.objects.filter(
         user=user,
         is_completed=False,
