@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Karma - Track Your Environmental Impact</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+            background: #0d1117;
+            color: #e6f7e6;
+        }
+
+        /* Animated mesh gradient background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(34, 139, 34, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(46, 125, 50, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(67, 160, 71, 0.1) 0%, transparent 50%);
+            animation: meshMove 20s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes meshMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        /* Floating orbs with glow */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.25;
+            animation: float 30s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        .orb1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #2e7d32, transparent);
+            top: -300px;
+            left: -300px;
+        }
+
+        .orb2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #43a047, transparent);
+            bottom: -250px;
+            right: -250px;
+            animation-delay: -10s;
+        }
+
+        .orb3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #66bb6a, transparent);
+            top: 50%;
+            left: 50%;
+            animation-delay: -20s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0.25;
+            }
+            33% { 
+                transform: translate(100px, -100px) scale(1.2);
+                opacity: 0.3;
+            }
+            66% { 
+                transform: translate(-100px, 100px) scale(0.9);
+                opacity: 0.2;
+            }
+        }
+
+        /* Subtle grid overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(102, 187, 106, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(102, 187, 106, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(13, 17, 23, 0.8);
+            border-bottom: 1px solid rgba(102, 187, 106, 0.1);
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #66bb6a;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            font-size: 2.4rem;
+            filter: drop-shadow(0 0 10px rgba(102, 187, 106, 0.5));
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .btn-nav {
+            padding: 0.8rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #0a0f0a;
+            box-shadow: 0 8px 30px rgba(102, 187, 106, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-nav:hover::before {
+            left: 100%;
+        }
+
+        .btn-nav:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(102, 187, 106, 0.5);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 6%;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.8rem;
+            background: rgba(102, 187, 106, 0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(102, 187, 106, 0.3);
+            border-radius: 50px;
+            color: #81c784;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 30px rgba(102, 187, 106, 0.15);
+        }
+
+        h1 {
+            font-size: clamp(3rem, 9vw, 6.5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 1.8rem;
+            color: #ffffff;
+            letter-spacing: -2px;
+            text-shadow: 0 0 80px rgba(102, 187, 106, 0.3);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #66bb6a, #43a047, #2e7d32);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+            filter: drop-shadow(0 0 30px rgba(102, 187, 106, 0.4));
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+            color: rgba(200, 230, 201, 0.9);
+            margin-bottom: 3.5rem;
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .btn {
+            padding: 1.3rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #0a0f0a;
+            box-shadow: 0 15px 45px rgba(102, 187, 106, 0.4);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(102, 187, 106, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(102, 187, 106, 0.1);
+            color: #81c784;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(102, 187, 106, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(102, 187, 106, 0.2);
+            border-color: rgba(102, 187, 106, 0.6);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(102, 187, 106, 0.2);
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            opacity: 0.6;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #81c784;
+        }
+
+        .trust-icon {
+            font-size: 1.5rem;
+        }
+
+        .features {
+            padding: 10rem 6%;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            color: rgba(200, 230, 201, 0.8);
+            font-size: 1.25rem;
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(46, 125, 50, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(102, 187, 106, 0.15);
+            border-radius: 28px;
+            padding: 3rem;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top left, rgba(102, 187, 106, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            background: rgba(46, 125, 50, 0.1);
+            border-color: rgba(102, 187, 106, 0.4);
+            box-shadow: 0 25px 60px rgba(102, 187, 106, 0.2);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(102, 187, 106, 0.3);
+            transition: all 0.5s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(102, 187, 106, 0.5);
+        }
+
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1.2rem;
+            color: #e6f7e6;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: rgba(200, 230, 201, 0.75);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .stats {
+            padding: 8rem 6%;
+            text-align: center;
+            background: linear-gradient(180deg, transparent, rgba(46, 125, 50, 0.05), transparent);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            animation: fadeInUp 1s ease;
+            position: relative;
+        }
+
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #66bb6a, transparent);
+        }
+
+        .stat-number {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.8rem;
+            letter-spacing: -2px;
+        }
+
+        .stat-label {
+            color: rgba(200, 230, 201, 0.8);
+            font-size: 1.15rem;
+            font-weight: 500;
+        }
+
+        .impact-section {
+            padding: 10rem 6%;
+            position: relative;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 3rem auto 0;
+        }
+
+        .impact-card {
+            background: rgba(102, 187, 106, 0.08);
+            border: 1px solid rgba(102, 187, 106, 0.2);
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.4s;
+            backdrop-filter: blur(10px);
+        }
+
+        .impact-card:hover {
+            transform: scale(1.08) translateY(-5px);
+            border-color: rgba(102, 187, 106, 0.5);
+            box-shadow: 0 20px 50px rgba(102, 187, 106, 0.2);
+        }
+
+        .impact-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px rgba(102, 187, 106, 0.3));
+        }
+
+        .impact-card h4 {
+            color: #81c784;
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+
+        .impact-card p {
+            color: rgba(200, 230, 201, 0.7);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .cta-section {
+            padding: 10rem 6%;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-box {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.15), rgba(67, 160, 71, 0.1));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(102, 187, 106, 0.25);
+            border-radius: 40px;
+            padding: 5rem 4rem;
+            box-shadow: 0 30px 80px rgba(102, 187, 106, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 187, 106, 0.1), transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-box > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-box h2 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            margin-bottom: 1.8rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .cta-box p {
+            font-size: 1.3rem;
+            color: rgba(200, 230, 201, 0.9);
+            margin-bottom: 3rem;
+            line-height: 1.7;
+        }
+
+        footer {
+            padding: 3.5rem 6%;
+            text-align: center;
+            border-top: 1px solid rgba(102, 187, 106, 0.1);
+            color: rgba(200, 230, 201, 0.5);
+            background: rgba(13, 17, 23, 0.8);
+        }
+
+        footer p {
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.2rem 5%;
+            }
+
+            .logo {
+                font-size: 1.4rem;
+            }
+
+            .btn-nav {
+                padding: 0.7rem 1.8rem;
+                font-size: 0.9rem;
+            }
+
+            .hero {
+                padding: 2rem 5%;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .features, .impact-section, .cta-section {
+                padding: 6rem 5%;
+            }
+
+            .cta-box {
+                padding: 3rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    <div class="grid-overlay"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <nav>
+        <div class="logo">
+            <span class="logo-icon">🌱</span>
+            Carbon Karma
+        </div>
+        <a href="#" class="btn-nav">Login</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>🌍</span>
+                <span>Sustainable Living Made Simple</span>
+            </div>
+            <h1>Track Your <span class="highlight">Carbon Karma</span></h1>
+            <p class="subtitle">Make every action count. Monitor your environmental footprint, celebrate sustainable choices, and join a community committed to planetary health.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">Start Tracking Free</a>
+                <a href="#" class="btn btn-secondary">See How It Works</a>
+            </div>
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <span class="trust-icon">✓</span>
+                    <span>Free Forever</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="trust-icon">✓</span>
+                    <span>No Credit Card</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="trust-icon">✓</span>
+                    <span>250K+ Users</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2 class="section-title">Everything You Need to Go Green</h2>
+            <p class="section-subtitle">Powerful tools to help you make sustainable decisions every day</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Tracking</h3>
+                <p>Monitor your carbon footprint in real-time. See the impact of every decision, from transportation to energy consumption.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Smart Goals</h3>
+                <p>Set personalized sustainability goals and get intelligent recommendations to achieve them faster.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌳</div>
+                <h3>Carbon Offset</h3>
+                <p>Automatically offset your emissions through verified environmental projects. Plant trees, support renewables, and more.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Community Impact</h3>
+                <p>Join challenges, share achievements, and inspire others. Your karma grows stronger together.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Seamless Integration</h3>
+                <p>Connect with your favorite apps and services. Track everything from one beautiful dashboard.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏆</div>
+                <h3>Earn Rewards</h3>
+                <p>Collect karma points for sustainable actions and unlock exclusive eco-friendly rewards and benefits.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">250K+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">5M+</div>
+                <div class="stat-label">Trees Planted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100K</div>
+                <div class="stat-label">Tons CO₂ Offset</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">150+</div>
+                <div class="stat-label">Countries</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="impact-section" id="impact">
+        <div class="section-header">
+            <h2 class="section-title">Your Impact Matters</h2>
+            <p class="section-subtitle">Small changes create big results when we work together</p>
+        </div>
+        <div class="impact-grid">
+            <div class="impact-card">
+                <div class="impact-icon">🚗</div>
+                <h4>Transportation</h4>
+                <p>Track miles, choose greener routes, and offset your commute</p>
+            </div>
+            <div class="impact-card">
+                <div class="impact-icon">⚡</div>
+                <h4>Energy Use</h4>
+                <p>Monitor home energy and discover efficiency opportunities</p>
+            </div>
+            <div class="impact-card">
+                <div class="impact-icon">🍽️</div>
+                <h4>Food Choices</h4>
+                <p>Log meals and learn the carbon cost of your diet</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-box">
+            <h2>Ready to Build Your Carbon Karma?</h2>
+            <p>Join thousands of conscious individuals creating a sustainable future. Start your journey today, completely free.</p>
+            <a href="#" class="btn btn-primary">Begin Your Journey</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Carbon Karma. All rights reserved. 🌍 Making the planet better, one action at a time.</p>
+    </footer>
+</body>
+</html>
