@@ -3,459 +3,681 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Carbon Karma - Transform your carbon footprint into an addictive game. Track, compete, and earn rewards for sustainable living.">
-    <meta name="theme-color" content="#065f46">
-    <title>Carbon Karma - Turn Carbon Reduction Into A Game</title>
-    
-    <!-- Premium Typography: Clash Display + Satoshi -->
-    <link href="https://api.fonts.coollabs.io/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <meta name="description" content="Carbon Karma - Futuristic carbon tracking gamification platform">
+    <meta name="theme-color" content="#00ff9f">
+    <title>Carbon Karma - Gamify Your Carbon Footprint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+    <!-- Cyberpunk Grid Background -->
+    <div class="cyber-grid"></div>
+    <div class="neon-glow"></div>
+
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#home" class="logo">
-                <div class="logo-orb"></div>
-                <span>Carbon Karma</span>
+                <div class="logo-hexagon">
+                    <div class="hex-inner">CK</div>
+                </div>
+                <span class="logo-text">CARBON<span class="neon">KARMA</span></span>
             </a>
             
-            <button class="mobile-toggle" aria-label="Menu">
-                <span></span><span></span><span></span>
+            <button class="mobile-menu" id="mobile-menu" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
             
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#dashboard">Dashboard</a></li>
-                <li><a href="#problem">Problem</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#leaderboard">Leaderboard</a></li>
-                <li><a href="#rewards">Rewards</a></li>
-                <li><a href="#donate">Donate</a></li>
-                <li><a href="#nepal">For Nepal</a></li>
-                <li><a href="#cta" class="btn-nav">Get Started</a></li>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#home" class="nav-link">HOME</a></li>
+                <li><a href="#dashboard" class="nav-link">DASHBOARD</a></li>
+                <li><a href="#problem" class="nav-link">PROBLEM</a></li>
+                <li><a href="#features" class="nav-link">FEATURES</a></li>
+                <li><a href="#leaderboard" class="nav-link">LEADERBOARD</a></li>
+                <li><a href="#rewards" class="nav-link">REWARDS</a></li>
+                <li><a href="#donate" class="nav-link">DONATE</a></li>
+                <li><a href="#nepal" class="nav-link">NEPAL</a></li>
+                <li><a href="#cta" class="btn-primary-nav">GET STARTED</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Hero -->
     <section class="hero" id="home">
-        <div class="hero-bg">
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div>
-        </div>
-        <canvas id="particles"></canvas>
+        <canvas id="particles-hero"></canvas>
         
         <div class="hero-content">
-            <div class="hero-badge">
-                <span class="dot"></span>
-                <span>Making Sustainability Addictive</span>
+            <div class="glitch-wrapper">
+                <h1 class="hero-title glitch" data-text="TURN CARBON INTO KARMA">
+                    TURN CARBON INTO KARMA
+                </h1>
             </div>
             
-            <h1 class="hero-title">
-                <span>Turn Carbon Reduction</span>
-                <span class="gradient">Into A Game</span>
-            </h1>
-            
-            <p class="hero-text">Walk instead of drive? Earn points. Beat your friends in sustainability challenges? Climb the leaderboard. We're making it addictive to save the planet, one daily choice at a time.</p>
+            <p class="hero-subtitle">Transform your sustainability journey into an addictive game. Earn points, compete globally, unlock rewards.</p>
             
             <div class="hero-cta">
-                <a href="#cta" class="btn btn-primary">
-                    <span>Download App</span>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <a href="#dashboard" class="btn btn-primary">
+                    <span class="btn-text">START MISSION</span>
+                    <span class="btn-icon">→</span>
                 </a>
-                <a href="#features" class="btn btn-ghost">Learn More</a>
+                <a href="#features" class="btn btn-outline">
+                    <span class="btn-text">LEARN MORE</span>
+                </a>
             </div>
             
-            <div class="hero-stats">
-                <div class="stat"><div class="num" data-count="2.3">0</div><div class="lbl">kg CO₂ Daily</div></div>
-                <div class="divider"></div>
-                <div class="stat"><div class="num" data-count="1247">0</div><div class="lbl">Active Users</div></div>
-                <div class="divider"></div>
-                <div class="stat"><div class="num" data-count="3247">0</div><div class="lbl">kg Impact</div></div>
+            <div class="stats-panel">
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-carbon">0</div>
+                    <div class="stat-label">KG CO₂ SAVED</div>
+                    <div class="stat-glow"></div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-users">0</div>
+                    <div class="stat-label">ACTIVE USERS</div>
+                    <div class="stat-glow"></div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-impact">0</div>
+                    <div class="stat-label">COMMUNITY KG</div>
+                    <div class="stat-glow"></div>
+                </div>
             </div>
         </div>
         
-        <div class="scroll-hint">
-            <span>Scroll</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-7-7m7 7l7-7" stroke="currentColor" stroke-width="2"/></svg>
+        <div class="scroll-down">
+            <span>SCROLL</span>
+            <div class="scroll-line"></div>
         </div>
     </section>
 
     <!-- Dashboard -->
-    <section class="section" id="dashboard">
-        <div class="section-head">
-            <span class="tag">Real-time</span>
-            <h2>Your Dashboard</h2>
-            <p>Track daily activities and watch your impact grow</p>
+    <section class="section dashboard" id="dashboard">
+        <div class="section-header">
+            <span class="section-tag">MISSION CONTROL</span>
+            <h2 class="section-title">YOUR DASHBOARD</h2>
+            <p class="section-desc">Real-time carbon tracking and impact visualization</p>
         </div>
 
-        <div class="dash-grid">
-            <div class="card card-summary">
-                <div class="card-top">
-                    <h3>Today's Summary</h3>
-                    <time>Jan 20, 2026</time>
+        <div class="dashboard-grid">
+            <!-- Today's Stats -->
+            <div class="cyber-card summary-card">
+                <div class="card-header">
+                    <h3>TODAY'S IMPACT</h3>
+                    <span class="date-display" id="today-date">JAN 20, 2026</span>
                 </div>
-                <div class="summary-list">
-                    <div class="sum-item">
-                        <div class="icon green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2"/></svg></div>
-                        <div><div class="val">4.2 kg</div><div class="lab">CO₂ Saved</div></div>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-icon carbon">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.3"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2"/></svg>
+                        </div>
+                        <div class="summary-data">
+                            <span class="data-value" id="today-carbon">4.2</span>
+                            <span class="data-unit">KG CO₂</span>
+                        </div>
+                        <div class="summary-label">SAVED</div>
                     </div>
-                    <div class="sum-item">
-                        <div class="icon blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg></div>
-                        <div><div class="val">42 pts</div><div class="lab">Points</div></div>
+                    <div class="summary-item">
+                        <div class="summary-icon points">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+                        </div>
+                        <div class="summary-data">
+                            <span class="data-value" id="today-points">42</span>
+                            <span class="data-unit">PTS</span>
+                        </div>
+                        <div class="summary-label">EARNED</div>
                     </div>
-                    <div class="sum-item">
-                        <div class="icon orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8z" fill="currentColor"/></svg></div>
-                        <div><div class="val">7 days</div><div class="lab">Streak</div></div>
+                    <div class="summary-item">
+                        <div class="summary-icon streak">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8z" fill="currentColor"/></svg>
+                        </div>
+                        <div class="summary-data">
+                            <span class="data-value" id="today-streak">7</span>
+                            <span class="data-unit">DAYS</span>
+                        </div>
+                        <div class="summary-label">STREAK</div>
                     </div>
                 </div>
             </div>
 
-            <div class="card card-log">
-                <div class="card-top">
-                    <h3>Log Activity</h3>
-                    <span class="badge">Quick</span>
+            <!-- Activity Logger -->
+            <div class="cyber-card activity-card">
+                <div class="card-header">
+                    <h3>LOG ACTIVITY</h3>
+                    <span class="pulse-badge">LIVE</span>
                 </div>
-                <div class="act-grid">
-                    <button class="act-btn" data-activity="walk" data-carbon="2.5">
-                        <span class="emoji">🚶</span>
-                        <div><div class="name">Walking</div><div class="impact">-2.5kg</div></div>
+                <div class="activity-grid">
+                    <button class="activity-btn" data-activity="walk" data-carbon="2.5" data-icon="🚶">
+                        <div class="activity-icon">🚶</div>
+                        <div class="activity-info">
+                            <span class="activity-name">WALKING</span>
+                            <span class="activity-impact">-2.5 KG</span>
+                        </div>
+                        <div class="activity-pulse"></div>
                     </button>
-                    <button class="act-btn" data-activity="bus" data-carbon="1.8">
-                        <span class="emoji">🚌</span>
-                        <div><div class="name">Transit</div><div class="impact">-1.8kg</div></div>
+                    <button class="activity-btn" data-activity="bus" data-carbon="1.8" data-icon="🚌">
+                        <div class="activity-icon">🚌</div>
+                        <div class="activity-info">
+                            <span class="activity-name">TRANSIT</span>
+                            <span class="activity-impact">-1.8 KG</span>
+                        </div>
+                        <div class="activity-pulse"></div>
                     </button>
-                    <button class="act-btn" data-activity="cycle" data-carbon="3.0">
-                        <span class="emoji">🚴</span>
-                        <div><div class="name">Cycling</div><div class="impact">-3.0kg</div></div>
+                    <button class="activity-btn" data-activity="cycle" data-carbon="3.0" data-icon="🚴">
+                        <div class="activity-icon">🚴</div>
+                        <div class="activity-info">
+                            <span class="activity-name">CYCLING</span>
+                            <span class="activity-impact">-3.0 KG</span>
+                        </div>
+                        <div class="activity-pulse"></div>
                     </button>
-                    <button class="act-btn" data-activity="meal" data-carbon="2.0">
-                        <span class="emoji">🥗</span>
-                        <div><div class="name">Meatless</div><div class="impact">-2.0kg</div></div>
+                    <button class="activity-btn" data-activity="meal" data-carbon="2.0" data-icon="🥗">
+                        <div class="activity-icon">🥗</div>
+                        <div class="activity-info">
+                            <span class="activity-name">MEATLESS</span>
+                            <span class="activity-impact">-2.0 KG</span>
+                        </div>
+                        <div class="activity-pulse"></div>
                     </button>
                 </div>
             </div>
 
-            <div class="card card-progress">
-                <div class="card-top">
-                    <h3>Weekly Progress</h3>
-                    <span class="badge success">68%</span>
+            <!-- Progress Chart -->
+            <div class="cyber-card progress-card">
+                <div class="card-header">
+                    <h3>WEEKLY PROGRESS</h3>
+                    <span class="progress-percent" id="week-percent">68%</span>
                 </div>
-                <canvas id="chart"></canvas>
-                <div class="prog-foot">
-                    <div><span>Goal</span><span>50kg</span></div>
-                    <div><span>Saved</span><span class="primary">34kg</span></div>
+                <canvas id="progress-chart"></canvas>
+                <div class="progress-stats">
+                    <div class="prog-stat">
+                        <span class="prog-label">GOAL</span>
+                        <span class="prog-value">50 KG</span>
+                    </div>
+                    <div class="prog-stat">
+                        <span class="prog-label">SAVED</span>
+                        <span class="prog-value neon">34 KG</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="card card-ach">
-                <div class="card-top">
-                    <h3>Achievements</h3>
-                    <a href="#">View All</a>
+            <!-- Achievements -->
+            <div class="cyber-card achievements-card">
+                <div class="card-header">
+                    <h3>ACHIEVEMENTS</h3>
+                    <a href="#" class="view-all">VIEW ALL →</a>
                 </div>
-                <div class="ach-list">
-                    <div class="ach unlocked">
+                <div class="achievements-list" id="achievements-list">
+                    <div class="achievement unlocked">
                         <span class="ach-icon">🏆</span>
-                        <div><div class="ach-name">Week Warrior</div><div class="ach-desc">7-day streak!</div></div>
-                        <span class="pts">+50</span>
+                        <div class="ach-info">
+                            <span class="ach-name">WEEK WARRIOR</span>
+                            <span class="ach-desc">7-day streak</span>
+                        </div>
+                        <span class="ach-points">+50</span>
                     </div>
-                    <div class="ach unlocked">
+                    <div class="achievement unlocked">
                         <span class="ach-icon">🌟</span>
-                        <div><div class="ach-name">Tree Planter</div><div class="ach-desc">10 trees</div></div>
-                        <span class="pts">+100</span>
+                        <div class="ach-info">
+                            <span class="ach-name">TREE PLANTER</span>
+                            <span class="ach-desc">10 trees planted</span>
+                        </div>
+                        <span class="ach-points">+100</span>
                     </div>
-                    <div class="ach locked">
+                    <div class="achievement locked">
                         <span class="ach-icon">🔒</span>
-                        <div><div class="ach-name">Carbon Hero</div><div class="ach-desc">Save 100kg</div></div>
-                        <span class="prog">78/100</span>
+                        <div class="ach-info">
+                            <span class="ach-name">CARBON HERO</span>
+                            <span class="ach-desc">Save 100kg CO₂</span>
+                        </div>
+                        <span class="ach-progress">78/100</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card card-chal">
-                <div class="card-top">
-                    <h3>Challenges</h3>
-                    <span class="badge">2 Active</span>
+            <!-- Challenges -->
+            <div class="cyber-card challenges-card">
+                <div class="card-header">
+                    <h3>ACTIVE MISSIONS</h3>
+                    <span class="mission-count">2 ACTIVE</span>
                 </div>
-                <div class="chal-list">
-                    <div class="chal">
-                        <div class="chal-head">
-                            <span>🥗</span>
-                            <div><div class="chal-name">Meatless Monday</div><div class="chal-desc">3 meals</div></div>
+                <div class="challenges-list">
+                    <div class="challenge">
+                        <div class="challenge-header">
+                            <span class="challenge-icon">🥗</span>
+                            <div class="challenge-info">
+                                <span class="challenge-name">MEATLESS MONDAY</span>
+                                <span class="challenge-desc">3 meals target</span>
+                            </div>
                         </div>
-                        <div class="bar"><div class="fill" style="width:66%"></div></div>
-                        <span class="chal-prog">2/3</span>
+                        <div class="challenge-bar">
+                            <div class="challenge-fill" style="width: 66%"></div>
+                            <span class="challenge-percent">66%</span>
+                        </div>
+                        <span class="challenge-status">2/3 COMPLETE</span>
                     </div>
-                    <div class="chal">
-                        <div class="chal-head">
-                            <span>🚶</span>
-                            <div><div class="chal-name">10K Steps</div><div class="chal-desc">Daily goal</div></div>
+                    <div class="challenge">
+                        <div class="challenge-header">
+                            <span class="challenge-icon">🚶</span>
+                            <div class="challenge-info">
+                                <span class="challenge-name">10K STEPS</span>
+                                <span class="challenge-desc">Daily goal</span>
+                            </div>
                         </div>
-                        <div class="bar"><div class="fill" style="width:42%"></div></div>
-                        <span class="chal-prog">4,200/10K</span>
+                        <div class="challenge-bar">
+                            <div class="challenge-fill" style="width: 42%"></div>
+                            <span class="challenge-percent">42%</span>
+                        </div>
+                        <span class="challenge-status">4,200/10,000</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card card-calc">
-                <div class="card-top">
-                    <h3>Calculator</h3>
-                    <span class="badge">Estimate</span>
+            <!-- Calculator -->
+            <div class="cyber-card calculator-card">
+                <div class="card-header">
+                    <h3>CARBON CALC</h3>
+                    <span class="calc-badge">SIMULATOR</span>
                 </div>
-                <form class="calc-form">
-                    <div class="form-grp">
-                        <label for="act">Activity</label>
-                        <select id="act">
-                            <option value="car">Car (vs Walk)</option>
-                            <option value="bike">Bike (vs Bus)</option>
-                            <option value="flight">Flight (vs Train)</option>
-                            <option value="meat">Beef (vs Vegan)</option>
+                <form class="calc-form" id="calc-form">
+                    <div class="input-group">
+                        <label>ACTIVITY TYPE</label>
+                        <select id="calc-activity" class="cyber-input">
+                            <option value="car">CAR (VS WALK)</option>
+                            <option value="bike">BIKE (VS BUS)</option>
+                            <option value="flight">FLIGHT (VS TRAIN)</option>
+                            <option value="meat">BEEF (VS VEGAN)</option>
                         </select>
                     </div>
-                    <div class="form-grp">
-                        <label for="dist">Distance/Qty</label>
-                        <input type="number" id="dist" value="10" min="0">
+                    <div class="input-group">
+                        <label>DISTANCE/QTY</label>
+                        <input type="number" id="calc-distance" class="cyber-input" value="10" min="0">
                     </div>
-                    <button type="button" class="btn btn-calc" onclick="calc()">Calculate</button>
-                    <div class="result" id="result">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
-                        <p>Enter details</p>
-                    </div>
+                    <button type="submit" class="btn btn-calc">CALCULATE</button>
                 </form>
+                <div class="calc-result" id="calc-result">
+                    <div class="result-icon">⚡</div>
+                    <div class="result-text">ENTER DATA TO SIMULATE</div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Problem -->
-    <section class="section" id="problem">
-        <div class="section-head">
-            <span class="tag">Challenge</span>
-            <h2>The Problem</h2>
-            <p>Kathmandu's air quality is among the worst. But telling people to 'pollute less' doesn't work.</p>
+    <section class="section problem" id="problem">
+        <div class="section-header">
+            <span class="section-tag">THE CRISIS</span>
+            <h2 class="section-title">SYSTEM FAILURE</h2>
+            <p class="section-desc">Current approaches to climate action are broken. We're fixing it.</p>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-card">
-                <div class="prob-icon">😶‍🌫️</div>
-                <h3>Abstract Impact</h3>
-                <p>People make carbon choices daily but never see consequences. The connection feels invisible.</p>
+        <div class="problem-grid">
+            <div class="problem-card">
+                <div class="problem-number">01</div>
+                <div class="problem-icon">😶‍🌫️</div>
+                <h3>ABSTRACT IMPACT</h3>
+                <p>People make carbon choices daily but consequences are invisible. No feedback loop.</p>
             </div>
-            <div class="prob-card">
-                <div class="prob-icon">😓</div>
-                <h3>Overwhelming Scale</h3>
-                <p>Climate change feels too big. People feel powerless and don't know where to start.</p>
+            <div class="problem-card">
+                <div class="problem-number">02</div>
+                <div class="problem-icon">😓</div>
+                <h3>OVERWHELMING SCALE</h3>
+                <p>Climate change feels too massive. Individuals feel powerless to make difference.</p>
             </div>
-            <div class="prob-card">
-                <div class="prob-icon">🔇</div>
-                <h3>No Feedback</h3>
-                <p>Without immediate feedback, sustainable behaviors don't stick. No dopamine hit.</p>
+            <div class="problem-card">
+                <div class="problem-number">03</div>
+                <div class="problem-icon">🔇</div>
+                <h3>ZERO FEEDBACK</h3>
+                <p>Without immediate rewards, sustainable behaviors don't stick. No dopamine.</p>
             </div>
         </div>
     </section>
 
     <!-- Features -->
-    <section class="section" id="features">
-        <div class="section-head">
-            <span class="tag">How It Works</span>
-            <h2>In Action</h2>
-            <p>Sustainability as a game with instant feedback and real rewards</p>
+    <section class="section features" id="features">
+        <div class="section-header">
+            <span class="section-tag">SOLUTION</span>
+            <h2 class="section-title">CARBON KARMA PROTOCOL</h2>
+            <p class="section-desc">Advanced gamification engine for sustainable behavior</p>
         </div>
         
-        <div class="feat-grid">
-            <div class="feat">
-                <div class="feat-num">01</div>
-                <div class="feat-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.2"/><rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.2"/><rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" opacity="0.2"/><rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor"/></svg></div>
-                <h3>Track Impact</h3>
-                <p>Log activities - commute, meals, energy. AI shows impact: "2.3 kg CO₂ saved = half a tree"</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-hex">
+                    <svg viewBox="0 0 100 100"><polygon points="50 1 95 25 95 75 50 99 5 75 5 25" fill="currentColor"/></svg>
+                    <span class="feature-number">01</span>
+                </div>
+                <h3>REAL-TIME TRACKING</h3>
+                <p>AI-powered carbon calculation. Instant feedback on every action. See your impact immediately.</p>
+                <ul class="feature-points">
+                    <li>Live activity logging</li>
+                    <li>Smart carbon calculations</li>
+                    <li>Instant visual feedback</li>
+                </ul>
             </div>
-            <div class="feat">
-                <div class="feat-num">02</div>
-                <div class="feat-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg></div>
-                <h3>Compete</h3>
-                <p>Earn points, compete on leaderboards, join challenges. Level up as you build habits.</p>
+            <div class="feature-card">
+                <div class="feature-hex">
+                    <svg viewBox="0 0 100 100"><polygon points="50 1 95 25 95 75 50 99 5 75 5 25" fill="currentColor"/></svg>
+                    <span class="feature-number">02</span>
+                </div>
+                <h3>GLOBAL LEADERBOARDS</h3>
+                <p>Compete with users worldwide. Climb rankings. Unlock exclusive achievements and badges.</p>
+                <ul class="feature-points">
+                    <li>Real-time rankings</li>
+                    <li>Category filtering</li>
+                    <li>Achievement system</li>
+                </ul>
             </div>
-            <div class="feat">
-                <div class="feat-num">03</div>
-                <div class="feat-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/></svg></div>
-                <h3>Real Rewards</h3>
-                <p>Convert points to rewards - cafe discounts, free bus rides, plant trees. Pays off literally.</p>
+            <div class="feature-card">
+                <div class="feature-hex">
+                    <svg viewBox="0 0 100 100"><polygon points="50 1 95 25 95 75 50 99 5 75 5 25" fill="currentColor"/></svg>
+                    <span class="feature-number">03</span>
+                </div>
+                <h3>REAL REWARDS</h3>
+                <p>Convert karma points to actual value. Redeem coupons, discounts, plant trees. Sustainability pays.</p>
+                <ul class="feature-points">
+                    <li>Instant redemption</li>
+                    <li>Partner ecosystem</li>
+                    <li>Tree planting fund</li>
+                </ul>
             </div>
         </div>
     </section>
 
     <!-- Leaderboard -->
-    <section class="section" id="leaderboard">
-        <div class="section-head">
-            <span class="tag">Community</span>
-            <h2>Top Savers</h2>
-            <p>Compete, level up, make impact</p>
-            <div class="comm-badge">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
-                <span>Community: <strong>3,247 kg CO₂</strong> this week</span>
+    <section class="section leaderboard" id="leaderboard">
+        <div class="section-header">
+            <span class="section-tag">RANKINGS</span>
+            <h2 class="section-title">GLOBAL LEADERBOARD</h2>
+            <p class="section-desc">Top carbon savers worldwide</p>
+            <div class="community-stat">
+                <span class="stat-icon">🌍</span>
+                <span>COMMUNITY: <strong id="community-total">3,247 KG</strong> THIS WEEK</span>
             </div>
         </div>
 
-        <div class="tabs">
-            <button class="tab active" data-cat="all"><span>👥</span> All</button>
-            <button class="tab" data-cat="workers"><span>💼</span> Workers</button>
-            <button class="tab" data-cat="students"><span>🎓</span> Students</button>
-            <button class="tab" data-cat="free"><span>🌟</span> Free</button>
+        <div class="leaderboard-tabs">
+            <button class="tab-btn active" data-category="all">
+                <span>👥</span> ALL USERS
+            </button>
+            <button class="tab-btn" data-category="workers">
+                <span>💼</span> WORKERS
+            </button>
+            <button class="tab-btn" data-category="students">
+                <span>🎓</span> STUDENTS
+            </button>
+            <button class="tab-btn" data-category="free">
+                <span>🌟</span> FREE
+            </button>
         </div>
 
-        <div class="leader-list" id="leaders"></div>
+        <div class="leaderboard-list" id="leaderboard-list"></div>
 
-        <div class="mini-stats">
-            <div class="mini"><span>📈</span><div><div class="mini-val">+23%</div><div class="mini-lab">Growth</div></div></div>
-            <div class="mini"><span>👥</span><div><div class="mini-val">1,247</div><div class="mini-lab">Users</div></div></div>
-            <div class="mini"><span>🏅</span><div><div class="mini-val">342</div><div class="mini-lab">Challenges</div></div></div>
+        <div class="leaderboard-stats">
+            <div class="leader-stat">
+                <div class="stat-icon">📈</div>
+                <div class="stat-data">
+                    <span class="stat-num">+23%</span>
+                    <span class="stat-label">WEEKLY GROWTH</span>
+                </div>
+            </div>
+            <div class="leader-stat">
+                <div class="stat-icon">👥</div>
+                <div class="stat-data">
+                    <span class="stat-num">1,247</span>
+                    <span class="stat-label">ACTIVE USERS</span>
+                </div>
+            </div>
+            <div class="leader-stat">
+                <div class="stat-icon">🏅</div>
+                <div class="stat-data">
+                    <span class="stat-num">342</span>
+                    <span class="stat-label">MISSIONS WON</span>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Rewards -->
-    <section class="section" id="rewards">
-        <div class="section-head">
-            <span class="tag">Incentives</span>
-            <h2>Real Rewards</h2>
-            <p>Less carbon = more rewards</p>
+    <section class="section rewards" id="rewards">
+        <div class="section-header">
+            <span class="section-tag">MARKETPLACE</span>
+            <h2 class="section-title">REWARD VAULT</h2>
+            <p class="section-desc">Exchange karma points for real-world value</p>
         </div>
 
-        <div class="points-card">
-            <div class="pts-bg"></div>
-            <div class="pts-content">
-                <div class="pts-lab">Your Points</div>
-                <div class="pts-val">2,450</div>
-                <div class="pts-conv">1 kg CO₂ = 10 pts</div>
+        <div class="points-display">
+            <div class="points-glow"></div>
+            <div class="points-content">
+                <span class="points-label">YOUR KARMA POINTS</span>
+                <span class="points-value" id="user-points">2,450</span>
+                <span class="points-rate">1 KG CO₂ = 10 POINTS</span>
             </div>
         </div>
 
-        <h3 class="sub-title">Available Rewards</h3>
+        <h3 class="subsection-title">AVAILABLE REWARDS</h3>
         <div class="rewards-grid" id="rewards-grid"></div>
 
-        <h3 class="sub-title">Active Coupons</h3>
-        <div class="coup-list">
-            <div class="coup-active">
-                <div class="coup-status">ACTIVE</div>
-                <div class="coup-code">WALK500</div>
-                <div class="coup-info">
-                    <h4>Free Bus Ride</h4>
-                    <p>Sajha Yatayat</p>
-                    <time>Expires Jan 30</time>
+        <h3 class="subsection-title">ACTIVE COUPONS</h3>
+        <div class="coupons-active">
+            <div class="coupon-card">
+                <div class="coupon-status">ACTIVE</div>
+                <div class="coupon-code">WALK500</div>
+                <div class="coupon-details">
+                    <h4>FREE BUS RIDE</h4>
+                    <p>Sajha Yatayat routes</p>
+                    <span class="coupon-expiry">Expires: Jan 30, 2026</span>
+                </div>
+                <div class="coupon-scan">
+                    <div class="qr-code">QR</div>
                 </div>
             </div>
-            <div class="coup-active">
-                <div class="coup-status">ACTIVE</div>
-                <div class="coup-code">ECO250</div>
-                <div class="coup-info">
-                    <h4>10% Coffee</h4>
+            <div class="coupon-card">
+                <div class="coupon-status">ACTIVE</div>
+                <div class="coupon-code">ECO250</div>
+                <div class="coupon-details">
+                    <h4>10% COFFEE</h4>
                     <p>Himalayan Java</p>
-                    <time>Expires Feb 15</time>
+                    <span class="coupon-expiry">Expires: Feb 15, 2026</span>
+                </div>
+                <div class="coupon-scan">
+                    <div class="qr-code">QR</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Donate -->
-    <section class="section" id="donate">
-        <div class="section-head">
-            <span class="tag">Impact</span>
-            <h2>Plant Trees</h2>
-            <p>Pool points to plant real trees across Nepal</p>
+    <!-- Donation -->
+    <section class="section donation" id="donate">
+        <div class="section-header">
+            <span class="section-tag">REFORESTATION</span>
+            <h2 class="section-title">TREE MISSION</h2>
+            <p class="section-desc">Pool karma points to plant real trees across Nepal</p>
         </div>
 
-        <div class="camp">
-            <div class="camp-vis">🌲🌳🌲</div>
-            <div class="camp-det">
-                <h3>Nepal Reforestation 2026</h3>
-                <p>10,000 trees across Kathmandu Valley</p>
+        <div class="campaign-panel">
+            <div class="campaign-visual">
+                <div class="tree-animation">🌲🌳🌲</div>
+            </div>
+            <div class="campaign-content">
+                <h3>NEPAL REFORESTATION 2026</h3>
+                <p>10,000 trees across Kathmandu Valley to combat air pollution</p>
                 
-                <div class="camp-stats">
-                    <div><div>6,847</div><div>Planted</div></div>
-                    <div><div>3,153</div><div>Remaining</div></div>
+                <div class="campaign-progress">
+                    <div class="progress-numbers">
+                        <div class="prog-num">
+                            <span class="num">6,847</span>
+                            <span class="label">PLANTED</span>
+                        </div>
+                        <div class="prog-num">
+                            <span class="num">3,153</span>
+                            <span class="label">REMAINING</span>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar-large">
+                        <div class="progress-fill-large" style="width: 68.47%"></div>
+                    </div>
+                    <span class="progress-label">68% COMPLETE</span>
                 </div>
                 
-                <div class="camp-bar"><div class="camp-fill" style="width:68.47%"></div></div>
-                <div class="camp-pct">68% Complete</div>
-                
-                <div class="don-grid">
-                    <button class="don-opt" data-pts="100" data-trees="5">
-                        <span>🌱</span><div><div>5 Trees</div><div>100 pts</div></div>
+                <div class="donation-options">
+                    <button class="donate-btn" data-points="100" data-trees="5">
+                        <span class="donate-icon">🌱</span>
+                        <div class="donate-info">
+                            <span class="donate-trees">5 TREES</span>
+                            <span class="donate-cost">100 PTS</span>
+                        </div>
                     </button>
-                    <button class="don-opt" data-pts="200" data-trees="10">
-                        <span>🌳</span><div><div>10 Trees</div><div>200 pts</div></div>
+                    <button class="donate-btn" data-points="200" data-trees="10">
+                        <span class="donate-icon">🌳</span>
+                        <div class="donate-info">
+                            <span class="donate-trees">10 TREES</span>
+                            <span class="donate-cost">200 PTS</span>
+                        </div>
                     </button>
-                    <button class="don-opt" data-pts="500" data-trees="25">
-                        <span>🌲</span><div><div>25 Trees</div><div>500 pts</div></div>
+                    <button class="donate-btn" data-points="500" data-trees="25">
+                        <span class="donate-icon">🌲</span>
+                        <div class="donate-info">
+                            <span class="donate-trees">25 TREES</span>
+                            <span class="donate-cost">500 PTS</span>
+                        </div>
                     </button>
-                    <button class="don-opt custom">
-                        <span>✨</span><div><div>Custom</div><div>Any amount</div></div>
+                    <button class="donate-btn custom">
+                        <span class="donate-icon">✨</span>
+                        <div class="donate-info">
+                            <span class="donate-trees">CUSTOM</span>
+                            <span class="donate-cost">ANY AMOUNT</span>
+                        </div>
                     </button>
                 </div>
             </div>
         </div>
 
-        <h3 class="sub-title">Top Contributors</h3>
-        <div class="contrib-list">
-            <div class="contrib"><span>🥇</span><div class="contrib-av">DM</div><div><div>Deepak Maharjan</div><div>850 trees</div></div></div>
-            <div class="contrib"><span>🥈</span><div class="contrib-av">MR</div><div><div>Mishel Rai</div><div>720 trees</div></div></div>
-            <div class="contrib"><span>🥉</span><div class="contrib-av">RS</div><div><div>Rina Shakya</div><div>680 trees</div></div></div>
+        <h3 class="subsection-title">TOP CONTRIBUTORS</h3>
+        <div class="contributors-grid">
+            <div class="contributor">
+                <span class="medal">🥇</span>
+                <div class="contributor-avatar">DM</div>
+                <div class="contributor-info">
+                    <span class="contributor-name">Deepak Maharjan</span>
+                    <span class="contributor-trees">850 TREES</span>
+                </div>
+            </div>
+            <div class="contributor">
+                <span class="medal">🥈</span>
+                <div class="contributor-avatar">MR</div>
+                <div class="contributor-info">
+                    <span class="contributor-name">Mishel Rai</span>
+                    <span class="contributor-trees">720 TREES</span>
+                </div>
+            </div>
+            <div class="contributor">
+                <span class="medal">🥉</span>
+                <div class="contributor-avatar">RS</div>
+                <div class="contributor-info">
+                    <span class="contributor-name">Rina Shakya</span>
+                    <span class="contributor-trees">680 TREES</span>
+                </div>
+            </div>
         </div>
 
-        <div class="impact-grid">
-            <div class="imp"><span>🌍</span><div>342 tons</div><div>CO₂ Offset</div></div>
-            <div class="imp"><span>💧</span><div>15 sites</div><div>Active</div></div>
-            <div class="imp"><span>👥</span><div>1,247</div><div>Members</div></div>
+        <div class="impact-metrics">
+            <div class="metric">
+                <span class="metric-icon">🌍</span>
+                <span class="metric-value">342</span>
+                <span class="metric-label">TONS CO₂ OFFSET</span>
+            </div>
+            <div class="metric">
+                <span class="metric-icon">💧</span>
+                <span class="metric-value">15</span>
+                <span class="metric-label">SITES ACTIVE</span>
+            </div>
+            <div class="metric">
+                <span class="metric-icon">👥</span>
+                <span class="metric-value">1,247</span>
+                <span class="metric-label">MEMBERS</span>
+            </div>
         </div>
     </section>
 
     <!-- Nepal -->
-    <section class="section" id="nepal">
-        <div class="section-head">
-            <span class="tag">Localized</span>
-            <h2>Built For Nepal</h2>
-            <p>Tailored for unique needs</p>
+    <section class="section nepal" id="nepal">
+        <div class="section-header">
+            <span class="section-tag">LOCALIZED</span>
+            <h2 class="section-title">BUILT FOR NEPAL</h2>
+            <p class="section-desc">Optimized for local infrastructure and culture</p>
         </div>
         
         <div class="nepal-grid">
-            <div class="nepal-item"><span>📴</span><h4>Offline</h4><p>Track without internet</p></div>
-            <div class="nepal-item"><span>🇳🇵</span><h4>Nepali</h4><p>नेपाली interface</p></div>
-            <div class="nepal-item"><span>🚌</span><h4>Local</h4><p>Tempos, microbuses</p></div>
-            <div class="nepal-item"><span>🌏</span><h4>Context</h4><p>Nepal emissions</p></div>
+            <div class="nepal-card">
+                <div class="nepal-icon">📴</div>
+                <h4>OFFLINE MODE</h4>
+                <p>Track activities without internet. Auto-sync when connected.</p>
+            </div>
+            <div class="nepal-card">
+                <div class="nepal-icon">🇳🇵</div>
+                <h4>NEPALI LANGUAGE</h4>
+                <p>Full नेपाली interface and community support.</p>
+            </div>
+            <div class="nepal-card">
+                <div class="nepal-icon">🚌</div>
+                <h4>LOCAL TRANSPORT</h4>
+                <p>Tempos, microbuses, local routes tracked.</p>
+            </div>
+            <div class="nepal-card">
+                <div class="nepal-icon">🌏</div>
+                <h4>LOCAL DATA</h4>
+                <p>Nepal-specific emission calculations.</p>
+            </div>
         </div>
     </section>
 
     <!-- CTA -->
-    <section class="cta" id="cta">
+    <section class="cta-section" id="cta">
         <div class="cta-content">
-            <h2>Ready to Start?</h2>
-            <p>Join thousands making sustainability addictive</p>
-            <a href="#" class="btn btn-primary btn-lg">
-                <span>Download Now</span>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <h2 class="cta-title">JOIN THE MISSION</h2>
+            <p class="cta-text">Start earning karma. Make impact. Change the world.</p>
+            <a href="#dashboard" class="btn btn-primary btn-large">
+                <span class="btn-text">INITIALIZE SYSTEM</span>
+                <span class="btn-icon">→</span>
             </a>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="foot-content">
-            <div class="foot-brand">
-                <div class="logo"><div class="logo-orb"></div><span>Carbon Karma</span></div>
-                <p>Making sustainability addictive</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo-hexagon small">
+                    <div class="hex-inner">CK</div>
+                </div>
+                <span class="footer-title">CARBON KARMA</span>
+                <p>Making sustainability addictive through gamification</p>
             </div>
-            <div class="social">
-                <a href="#" aria-label="Twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg></a>
-                <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="white"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg></a>
-                <a href="#" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+            <div class="footer-social">
+                <a href="#" aria-label="Twitter">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+                </a>
+                <a href="#" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="rgba(0,0,0,0.8)"/></svg>
+                </a>
+                <a href="#" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                </a>
             </div>
         </div>
-        <div class="foot-bottom">
-            <p>&copy; 2026 Carbon Karma</p>
-            <p>By Mishel Rai 💚</p>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CARBON KARMA. ALL RIGHTS RESERVED.</p>
+            <p>Created by <span class="neon">MISHEL RAI</span></p>
         </div>
     </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
 
     <script src="script.js"></script>
 </body>

@@ -1,52 +1,68 @@
 /**
- * CARBON KARMA - PREMIUM JAVASCRIPT
- * Advanced interactions, canvas particles, smooth animations
+ * CARBON KARMA - FUTURISTIC JAVASCRIPT
+ * All functions connected and working
  */
 
 'use strict';
 
-// ===== APP STATE =====
-const STATE = {
-  points: 2450,
-  carbonSaved: 4.2,
-  streak: 7,
-  currentTab: 'all',
-  userCategory: 'all'
+// ===== STATE MANAGEMENT =====
+const APP_STATE = {
+  user: {
+    points: 2450,
+    carbonSaved: 4.2,
+    streak: 7,
+    todayPoints: 42,
+    weekGoal: 50,
+    weekSaved: 34
+  },
+  leaderboard: {
+    currentCategory: 'all',
+    data: [
+      { rank: 1, name: 'Deepak Maharjan', avatar: 'DM', carbon: 48.5, points: 485, category: 'workers' },
+      { rank: 2, name: 'Mishel Rai', avatar: 'MR', carbon: 42.3, points: 423, category: 'free' },
+      { rank: 3, name: 'Rina Shakya', avatar: 'RS', carbon: 38.7, points: 387, category: 'students' },
+      { rank: 4, name: 'Sanjay Thapa', avatar: 'ST', carbon: 35.2, points: 352, category: 'workers' },
+      { rank: 5, name: 'Priya Gurung', avatar: 'PG', carbon: 32.8, points: 328, category: 'students' },
+      { rank: 6, name: 'Rajesh Shrestha', avatar: 'RSh', carbon: 30.4, points: 304, category: 'free' },
+      { rank: 7, name: 'Maya Tamang', avatar: 'MT', carbon: 28.9, points: 289, category: 'workers' },
+      { rank: 8, name: 'Bikash Magar', avatar: 'BM', carbon: 26.5, points: 265, category: 'students' },
+      { rank: 9, name: 'Sunita Rai', avatar: 'SR', carbon: 24.3, points: 243, category: 'free' },
+      { rank: 10, name: 'Kiran Adhikari', avatar: 'KA', carbon: 22.7, points: 227, category: 'workers' }
+    ]
+  },
+  rewards: [
+    { id: 1, name: 'Free Bus Ride', provider: 'Sajha Yatayat', cost: 500, icon: '🚌' },
+    { id: 2, name: '10% Coffee', provider: 'Himalayan Java', cost: 250, icon: '☕' },
+    { id: 3, name: '15% Meal', provider: 'Bhojan Griha', cost: 350, icon: '🍽️' },
+    { id: 4, name: 'Free Bike', provider: 'EcoBike', cost: 600, icon: '🚴' },
+    { id: 5, name: '20% Groceries', provider: 'Bhat Bhateni', cost: 800, icon: '🛒' },
+    { id: 6, name: 'Plant Tree', provider: 'Carbon Karma', cost: 1000, icon: '🌳' }
+  ],
+  calculator: {
+    formulas: {
+      car: (d) => d * 0.21,
+      bike: (d) => d * 0.08,
+      flight: (d) => d * 0.25,
+      meat: (m) => m * 2.5
+    }
+  }
 };
 
 // ===== UTILITY FUNCTIONS =====
 const Utils = {
-  formatNumber: (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
-  
-  lerp: (start, end, t) => start + (end - start) * t,
-  
-  easeOutCubic: (t) => 1 - Math.pow(1 - t, 3),
-  
-  showToast: (message, type = 'success') => {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      padding: 1rem 1.5rem;
-      background: ${type === 'success' ? '#10b981' : '#ef4444'};
-      color: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-      z-index: 9999;
-      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      font-weight: 600;
-    `;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.animation = 'slideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
+  formatNumber: (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   },
   
-  animateNumber: (element, target, duration = 2000) => {
+  lerp: (start, end, t) => {
+    return start + (end - start) * t;
+  },
+  
+  easeOutCubic: (t) => {
+    return 1 - Math.pow(1 - t, 3);
+  },
+  
+  animateNumber: (element, target, duration = 2000, decimals = 0) => {
     const start = parseFloat(element.textContent) || 0;
     const startTime = performance.now();
     
@@ -56,27 +72,52 @@ const Utils = {
       const eased = Utils.easeOutCubic(progress);
       const current = Utils.lerp(start, target, eased);
       
-      element.textContent = target % 1 === 0 
-        ? Math.round(current).toString()
-        : current.toFixed(1);
+      element.textContent = decimals > 0 
+        ? current.toFixed(decimals)
+        : Math.round(current).toString();
       
-      if (progress < 1) requestAnimationFrame(update);
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
     };
     
     requestAnimationFrame(update);
+  },
+  
+  showToast: (message, type = 'success') => {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.animation = 'slideInToast 0.4s reverse';
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  },
+  
+  getCurrentDate: () => {
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const now = new Date();
+    return `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
   }
 };
 
 // ===== PARTICLE SYSTEM =====
 class ParticleSystem {
-  constructor(canvas) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    
+    this.ctx = this.canvas.getContext('2d');
     this.particles = [];
-    this.particleCount = 60;
+    this.particleCount = 80;
     this.resize();
     this.init();
     this.animate();
+    
     window.addEventListener('resize', () => this.resize());
   }
   
@@ -94,7 +135,7 @@ class ParticleSystem {
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
         radius: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.5 + 0.2
+        opacity: Math.random() * 0.5 + 0.3
       });
     }
   }
@@ -102,6 +143,7 @@ class ParticleSystem {
   animate() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
+    // Update and draw particles
     this.particles.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
@@ -111,7 +153,7 @@ class ParticleSystem {
       
       this.ctx.beginPath();
       this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      this.ctx.fillStyle = `rgba(16, 185, 129, ${p.opacity})`;
+      this.ctx.fillStyle = `rgba(0, 255, 159, ${p.opacity})`;
       this.ctx.fill();
     });
     
@@ -122,11 +164,11 @@ class ParticleSystem {
         const dy = p1.y - p2.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         
-        if (dist < 150) {
+        if (dist < 120) {
           this.ctx.beginPath();
           this.ctx.moveTo(p1.x, p1.y);
           this.ctx.lineTo(p2.x, p2.y);
-          this.ctx.strokeStyle = `rgba(16, 185, 129, ${0.15 * (1 - dist / 150)})`;
+          this.ctx.strokeStyle = `rgba(0, 255, 159, ${0.2 * (1 - dist / 120)})`;
           this.ctx.lineWidth = 1;
           this.ctx.stroke();
         }
@@ -137,50 +179,190 @@ class ParticleSystem {
   }
 }
 
-// ===== LEADERBOARD MANAGER =====
-const Leaderboard = {
-  data: {
-    all: [
-      { rank: 1, name: 'Deepak Maharjan', avatar: 'DM', carbon: 48.5, points: 485, category: 'workers' },
-      { rank: 2, name: 'Mishel Rai', avatar: 'MR', carbon: 42.3, points: 423, category: 'free' },
-      { rank: 3, name: 'Rina Shakya', avatar: 'RS', carbon: 38.7, points: 387, category: 'students' },
-      { rank: 4, name: 'Sanjay Thapa', avatar: 'ST', carbon: 35.2, points: 352, category: 'workers' },
-      { rank: 5, name: 'Priya Gurung', avatar: 'PG', carbon: 32.8, points: 328, category: 'students' },
-      { rank: 6, name: 'Rajesh Shrestha', avatar: 'RSh', carbon: 30.4, points: 304, category: 'free' },
-      { rank: 7, name: 'Maya Tamang', avatar: 'MT', carbon: 28.9, points: 289, category: 'workers' },
-      { rank: 8, name: 'Bikash Magar', avatar: 'BM', carbon: 26.5, points: 265, category: 'students' },
-      { rank: 9, name: 'Sunita Rai', avatar: 'SR', carbon: 24.3, points: 243, category: 'free' },
-      { rank: 10, name: 'Kiran Adhikari', avatar: 'KA', carbon: 22.7, points: 227, category: 'workers' }
-    ]
-  },
-  
+// ===== NAVIGATION =====
+const Navigation = {
   init() {
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', (e) => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        this.render(tab.dataset.cat);
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+    
+    if (mobileMenu && navLinks) {
+      mobileMenu.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+      });
+      
+      // Close menu when link clicked
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.classList.remove('active');
+          mobileMenu.classList.remove('active');
+        });
+      });
+    }
+    
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const offset = 80;
+          const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
       });
     });
+    
+    // Navbar scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 100) {
+        navbar.style.background = 'rgba(10, 14, 39, 0.95)';
+        navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.7)';
+      } else {
+        navbar.style.background = 'rgba(10, 14, 39, 0.8)';
+        navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.5)';
+      }
+      
+      lastScroll = currentScroll;
+    });
+  }
+};
+
+// ===== ACTIVITY LOGGER =====
+const ActivityLogger = {
+  init() {
+    document.querySelectorAll('.activity-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const carbon = parseFloat(btn.dataset.carbon);
+        const activity = btn.dataset.activity;
+        const icon = btn.dataset.icon;
+        
+        this.logActivity(activity, carbon, icon);
+      });
+    });
+  },
+  
+  logActivity(activity, carbon, icon) {
+    APP_STATE.user.carbonSaved += carbon;
+    APP_STATE.user.todayPoints += carbon * 10;
+    APP_STATE.user.points += carbon * 10;
+    APP_STATE.user.weekSaved += carbon;
+    
+    // Update UI
+    this.updateDashboard();
+    
+    // Show success toast
+    Utils.showToast(`${icon} Logged! Saved ${carbon}kg CO₂ (+${carbon * 10} points)`, 'success');
+    
+    // Animate button
+    const allBtns = document.querySelectorAll('.activity-btn');
+    allBtns.forEach(b => {
+      if (b.dataset.activity === activity) {
+        b.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          b.style.transform = '';
+        }, 200);
+      }
+    });
+  },
+  
+  updateDashboard() {
+    // Update today's stats
+    const carbonEl = document.getElementById('today-carbon');
+    const pointsEl = document.getElementById('today-points');
+    const userPointsEl = document.getElementById('user-points');
+    
+    if (carbonEl) Utils.animateNumber(carbonEl, APP_STATE.user.carbonSaved, 1000, 1);
+    if (pointsEl) Utils.animateNumber(pointsEl, APP_STATE.user.todayPoints, 1000, 0);
+    if (userPointsEl) Utils.animateNumber(userPointsEl, APP_STATE.user.points, 1000, 0);
+    
+    // Update week progress
+    const percent = Math.round((APP_STATE.user.weekSaved / APP_STATE.user.weekGoal) * 100);
+    const percentEl = document.getElementById('week-percent');
+    if (percentEl) percentEl.textContent = `${percent}%`;
+  }
+};
+
+// ===== CALCULATOR =====
+const Calculator = {
+  init() {
+    const form = document.getElementById('calc-form');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.calculate();
+      });
+    }
+  },
+  
+  calculate() {
+    const activity = document.getElementById('calc-activity').value;
+    const distance = parseFloat(document.getElementById('calc-distance').value) || 0;
+    const resultEl = document.getElementById('calc-result');
+    
+    if (distance <= 0) {
+      resultEl.innerHTML = `
+        <div class="result-icon">⚠️</div>
+        <div class="result-text">PLEASE ENTER VALID NUMBER</div>
+      `;
+      return;
+    }
+    
+    const saved = APP_STATE.calculator.formulas[activity](distance);
+    const trees = (saved / 21).toFixed(1);
+    const points = Math.round(saved * 10);
+    
+    resultEl.innerHTML = `
+      <div class="result-icon">✅</div>
+      <div style="font-size: 2.5rem; font-weight: 900; color: var(--neon-cyan); text-shadow: var(--glow-md); margin: 1rem 0;">
+        ${saved.toFixed(2)} KG CO₂
+      </div>
+      <div class="result-text">= ${trees} TREES = ${points} POINTS</div>
+    `;
+    
+    resultEl.style.animation = 'none';
+    setTimeout(() => {
+      resultEl.style.animation = 'slideUp 0.6s ease-out';
+    }, 10);
+  }
+};
+
+// ===== LEADERBOARD =====
+const Leaderboard = {
+  init() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const category = btn.dataset.category;
+        this.render(category);
+      });
+    });
+    
     this.render('all');
   },
   
   render(category) {
-    STATE.currentTab = category;
-    const container = document.getElementById('leaders');
+    APP_STATE.leaderboard.currentCategory = category;
+    const container = document.getElementById('leaderboard-list');
     if (!container) return;
     
     const filtered = category === 'all'
-      ? this.data.all
-      : this.data.all.filter(u => u.category === category);
+      ? APP_STATE.leaderboard.data
+      : APP_STATE.leaderboard.data.filter(u => u.category === category);
     
     container.innerHTML = filtered.map((user, idx) => `
-      <div class="leader-item" style="animation: fadeUp 0.4s ${idx * 0.05}s both">
+      <div class="leader-entry" style="animation: slideUp 0.4s ${idx * 0.05}s both">
         <div class="leader-rank">
           <span class="rank-num ${user.rank <= 3 ? 'top' : ''}">#${user.rank}</span>
-          ${user.rank === 1 ? '<span class="medal">🥇</span>' : ''}
-          ${user.rank === 2 ? '<span class="medal">🥈</span>' : ''}
-          ${user.rank === 3 ? '<span class="medal">🥉</span>' : ''}
+          ${user.rank === 1 ? '<span class="rank-medal">🥇</span>' : ''}
+          ${user.rank === 2 ? '<span class="rank-medal">🥈</span>' : ''}
+          ${user.rank === 3 ? '<span class="rank-medal">🥉</span>' : ''}
         </div>
         <div class="leader-avatar">${user.avatar}</div>
         <div class="leader-info">
@@ -197,104 +379,100 @@ const Leaderboard = {
   },
   
   applyStyles() {
-    if (document.getElementById('leader-styles')) return;
+    if (document.getElementById('leader-entry-styles')) return;
+    
     const style = document.createElement('style');
-    style.id = 'leader-styles';
+    style.id = 'leader-entry-styles';
     style.textContent = `
-      @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .leader-item {
+      .leader-entry {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
-        padding: 1.5rem;
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        margin-bottom: 1rem;
-        transition: all 0.2s;
+        gap: 2rem;
+        padding: 2rem;
+        background: rgba(19, 24, 51, 0.8);
+        border: 1px solid var(--cyber-border);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s var(--ease-cyber);
       }
-      .leader-item:hover {
-        transform: translateX(8px);
-        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      .leader-entry:hover {
+        border-color: var(--neon-cyan);
+        transform: translateX(10px);
+        box-shadow: var(--glow-md);
       }
       .leader-rank {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        min-width: 80px;
+        gap: 1rem;
+        min-width: 100px;
       }
       .rank-num {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #6b7280;
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 900;
+        color: var(--text-muted);
       }
       .rank-num.top {
-        color: #059669;
+        color: var(--neon-cyan);
+        text-shadow: var(--glow-sm);
       }
-      .medal {
-        font-size: 1.5rem;
+      .rank-medal {
+        font-size: 2rem;
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
       }
       .leader-avatar {
-        width: 60px;
-        height: 60px;
+        width: 70px;
+        height: 70px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
+        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+        color: var(--cyber-darker);
         border-radius: 50%;
-        font-size: 1.25rem;
-        font-weight: 700;
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 900;
+        box-shadow: var(--glow-md);
       }
       .leader-info {
         flex: 1;
       }
       .leader-name {
-        font-size: 1.125rem;
+        font-size: 1.375rem;
         font-weight: 700;
+        letter-spacing: 1px;
         margin-bottom: 0.5rem;
+        color: var(--text-primary);
       }
       .leader-stats {
         display: flex;
-        gap: 1rem;
-        font-size: 0.875rem;
-        color: #6b7280;
+        gap: 1.5rem;
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
       }
     `;
     document.head.appendChild(style);
   }
 };
 
-// ===== REWARDS MANAGER =====
+// ===== REWARDS =====
 const Rewards = {
-  items: [
-    { id: 1, title: 'Free Bus Ride', provider: 'Sajha Yatayat', cost: 500, discount: '100%', icon: '🚌' },
-    { id: 2, title: '10% Coffee', provider: 'Himalayan Java', cost: 250, discount: '10%', icon: '☕' },
-    { id: 3, title: '15% Meal', provider: 'Bhojan Griha', cost: 350, discount: '15%', icon: '🍽️' },
-    { id: 4, title: 'Free Bike', provider: 'EcoBike Nepal', cost: 600, discount: '100%', icon: '🚴' },
-    { id: 5, title: '20% Groceries', provider: 'Bhat Bhateni', cost: 800, discount: '20%', icon: '🛒' },
-    { id: 6, title: 'Plant Tree', provider: 'Carbon Karma', cost: 1000, discount: 'Gift', icon: '🌳' }
-  ],
-  
   init() {
-    this.render();
+    this.renderRewards();
   },
   
-  render() {
+  renderRewards() {
     const grid = document.getElementById('rewards-grid');
     if (!grid) return;
     
-    grid.innerHTML = this.items.map(item => `
-      <div class="reward-card" data-id="${item.id}">
-        <div class="reward-icon">${item.icon}</div>
-        <h4 class="reward-title">${item.title}</h4>
-        <p class="reward-provider">${item.provider}</p>
-        <div class="reward-discount">${item.discount} OFF</div>
-        <button class="reward-btn" onclick="Rewards.redeem(${item.id}, ${item.cost})">
-          Redeem ${item.cost} pts
+    grid.innerHTML = APP_STATE.rewards.map(reward => `
+      <div class="reward-card" data-id="${reward.id}">
+        <div class="reward-icon">${reward.icon}</div>
+        <h4 class="reward-name">${reward.name}</h4>
+        <p class="reward-provider">${reward.provider}</p>
+        <div class="reward-cost-badge">${reward.cost} PTS</div>
+        <button class="reward-redeem-btn" onclick="Rewards.redeem(${reward.id}, ${reward.cost})">
+          REDEEM NOW
         </button>
       </div>
     `).join('');
@@ -303,87 +481,98 @@ const Rewards = {
   },
   
   redeem(id, cost) {
-    if (STATE.points < cost) {
-      Utils.showToast('Not enough points!', 'error');
+    if (APP_STATE.user.points < cost) {
+      Utils.showToast('❌ NOT ENOUGH POINTS!', 'error');
       return;
     }
-    STATE.points -= cost;
-    Utils.showToast('Coupon redeemed! 🎉', 'success');
-    document.querySelector('.pts-val').textContent = Utils.formatNumber(STATE.points);
+    
+    APP_STATE.user.points -= cost;
+    
+    const reward = APP_STATE.rewards.find(r => r.id === id);
+    Utils.showToast(`✅ ${reward.icon} ${reward.name} REDEEMED!`, 'success');
+    
+    // Update points display
+    const userPointsEl = document.getElementById('user-points');
+    if (userPointsEl) Utils.animateNumber(userPointsEl, APP_STATE.user.points, 1000, 0);
   },
   
   applyStyles() {
-    if (document.getElementById('reward-styles')) return;
+    if (document.getElementById('reward-card-styles')) return;
+    
     const style = document.createElement('style');
-    style.id = 'reward-styles';
+    style.id = 'reward-card-styles';
     style.textContent = `
       .reward-card {
-        background: white;
-        border-radius: 1rem;
-        padding: 2rem;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        padding: 2.5rem 2rem;
+        background: rgba(19, 24, 51, 0.8);
+        border: 1px solid var(--cyber-border);
+        border-radius: 8px;
         text-align: center;
-        border: 2px solid #e5e7eb;
-        transition: all 0.2s;
+        transition: all 0.3s var(--ease-cyber);
       }
       .reward-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-        border-color: #10b981;
+        border-color: var(--neon-cyan);
+        transform: translateY(-10px);
+        box-shadow: var(--glow-lg);
       }
       .reward-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0 0 20px rgba(0, 255, 159, 0.3));
       }
-      .reward-title {
-        font-size: 1.25rem;
-        font-weight: 700;
+      .reward-name {
+        font-size: 1.375rem;
         margin-bottom: 0.5rem;
+        color: var(--text-primary);
+        letter-spacing: 1px;
       }
       .reward-provider {
-        font-size: 0.875rem;
-        color: #6b7280;
-        margin-bottom: 1rem;
-      }
-      .reward-discount {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        background: linear-gradient(135deg, #fb923c, #f97316);
-        color: white;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        font-weight: 700;
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
         margin-bottom: 1.5rem;
       }
-      .reward-btn {
-        width: 100%;
-        padding: 0.75rem;
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
-        border: none;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
+      .reward-cost-badge {
+        display: inline-block;
+        padding: 0.625rem 1.25rem;
+        background: rgba(0, 255, 159, 0.2);
+        border: 1px solid var(--neon-cyan);
+        border-radius: 20px;
+        font-family: var(--font-display);
+        font-weight: 700;
+        color: var(--neon-cyan);
+        margin-bottom: 1.5rem;
+        box-shadow: var(--glow-sm);
       }
-      .reward-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      .reward-redeem-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+        color: var(--cyber-darker);
+        border-radius: 4px;
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: 2px;
+        box-shadow: var(--glow-md);
+        transition: all 0.3s var(--ease-cyber);
+      }
+      .reward-redeem-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 40px rgba(0, 255, 159, 0.6);
       }
     `;
     document.head.appendChild(style);
   }
 };
 
-// ===== DONATION MANAGER =====
+// ===== DONATIONS =====
 const Donations = {
   init() {
-    document.querySelectorAll('.don-opt').forEach(btn => {
+    document.querySelectorAll('.donate-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         if (btn.classList.contains('custom')) {
           this.customDonate();
         } else {
-          const points = parseInt(btn.dataset.pts);
+          const points = parseInt(btn.dataset.points);
           const trees = parseInt(btn.dataset.trees);
           this.donate(points, trees);
         }
@@ -392,119 +581,105 @@ const Donations = {
   },
   
   donate(points, trees) {
-    if (STATE.points < points) {
-      Utils.showToast('Not enough points!', 'error');
+    if (APP_STATE.user.points < points) {
+      Utils.showToast('❌ NOT ENOUGH POINTS!', 'error');
       return;
     }
-    STATE.points -= points;
-    Utils.showToast(`Planted ${trees} trees! 🌳`, 'success');
-    document.querySelector('.pts-val').textContent = Utils.formatNumber(STATE.points);
+    
+    APP_STATE.user.points -= points;
+    Utils.showToast(`🌳 ${trees} TREES PLANTED! THANK YOU!`, 'success');
+    
+    // Update points
+    const userPointsEl = document.getElementById('user-points');
+    if (userPointsEl) Utils.animateNumber(userPointsEl, APP_STATE.user.points, 1000, 0);
   },
   
   customDonate() {
-    const amount = prompt('How many points? (20 pts = 1 tree)');
+    const amount = prompt('HOW MANY POINTS TO DONATE? (20 PTS = 1 TREE)');
     if (!amount) return;
+    
     const points = parseInt(amount);
     if (isNaN(points) || points < 20) {
-      Utils.showToast('Minimum 20 points', 'error');
+      Utils.showToast('❌ MINIMUM 20 POINTS', 'error');
       return;
     }
-    if (STATE.points < points) {
-      Utils.showToast('Not enough points!', 'error');
+    
+    if (APP_STATE.user.points < points) {
+      Utils.showToast('❌ NOT ENOUGH POINTS!', 'error');
       return;
     }
+    
     const trees = Math.floor(points / 20);
-    STATE.points -= points;
-    Utils.showToast(`Planted ${trees} trees! 🌳`, 'success');
-    document.querySelector('.pts-val').textContent = Utils.formatNumber(STATE.points);
+    APP_STATE.user.points -= points;
+    Utils.showToast(`🌳 ${trees} TREES PLANTED! AMAZING!`, 'success');
+    
+    const userPointsEl = document.getElementById('user-points');
+    if (userPointsEl) Utils.animateNumber(userPointsEl, APP_STATE.user.points, 1000, 0);
   }
 };
 
-// ===== CALCULATOR =====
-const Calculator = {
-  formulas: {
-    car: (d) => d * 0.21,
-    bike: (d) => d * 0.08,
-    flight: (d) => d * 0.25,
-    meat: (m) => m * 2.5
-  },
-  
-  calculate() {
-    const activity = document.getElementById('act').value;
-    const distance = parseFloat(document.getElementById('dist').value) || 0;
-    const result = document.getElementById('result');
+// ===== PROGRESS CHART =====
+const ProgressChart = {
+  init() {
+    const canvas = document.getElementById('progress-chart');
+    if (!canvas) return;
     
-    if (distance <= 0) {
-      result.innerHTML = `
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
-        <p>Please enter valid number</p>
-      `;
-      return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width = canvas.offsetWidth;
+    const height = canvas.height = 200;
+    
+    const data = [3.2, 4.5, 3.8, 5.2, 4.8, 6.1, 4.2];
+    const labels = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+    
+    const max = Math.max(...data);
+    const padding = 40;
+    const chartWidth = width - padding * 2;
+    const chartHeight = height - padding * 2;
+    const barWidth = chartWidth / data.length;
+    
+    // Draw grid
+    ctx.strokeStyle = 'rgba(0, 255, 159, 0.1)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = padding + (chartHeight / 4) * i;
+      ctx.beginPath();
+      ctx.moveTo(padding, y);
+      ctx.lineTo(width - padding, y);
+      ctx.stroke();
     }
     
-    const saved = this.formulas[activity](distance);
-    const trees = (saved / 21).toFixed(1);
-    
-    result.innerHTML = `
-      <div style="font-size: 3rem; color: #10b981;">🌍</div>
-      <div style="color: #059669; font-weight: 700; font-size: 1.75rem;">
-        ${saved.toFixed(2)} kg CO₂ saved
-      </div>
-      <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">
-        = ${trees} trees planted! 🌳
-      </div>
-    `;
-    
-    result.style.animation = 'none';
-    setTimeout(() => { result.style.animation = 'fadeUp 0.5s'; }, 10);
-  }
-};
-
-// ===== ACTIVITY LOGGER =====
-const ActivityLogger = {
-  init() {
-    document.querySelectorAll('.act-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const carbon = parseFloat(btn.dataset.carbon);
-        STATE.carbonSaved += carbon;
-        Utils.showToast(`Saved ${carbon}kg CO₂! 🌱`, 'success');
-        
-        btn.style.transform = 'scale(0.95)';
-        setTimeout(() => { btn.style.transform = ''; }, 200);
-      });
+    // Draw bars
+    data.forEach((value, idx) => {
+      const barHeight = (value / max) * chartHeight;
+      const x = padding + idx * barWidth + barWidth * 0.2;
+      const y = height - padding - barHeight;
+      const w = barWidth * 0.6;
+      
+      // Gradient
+      const gradient = ctx.createLinearGradient(0, y, 0, height - padding);
+      gradient.addColorStop(0, '#00ff9f');
+      gradient.addColorStop(1, '#00d4ff');
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(x, y, w, barHeight);
+      
+      // Glow
+      ctx.shadowColor = 'rgba(0, 255, 159, 0.5)';
+      ctx.shadowBlur = 10;
+      ctx.fillRect(x, y, w, barHeight);
+      ctx.shadowBlur = 0;
+      
+      // Labels
+      ctx.fillStyle = '#a8b2d1';
+      ctx.font = '12px Rajdhani';
+      ctx.textAlign = 'center';
+      ctx.fillText(labels[idx], x + w / 2, height - padding + 20);
+      
+      // Values
+      ctx.fillStyle = '#00ff9f';
+      ctx.font = 'bold 12px Orbitron';
+      ctx.fillText(value.toFixed(1), x + w / 2, y - 10);
     });
-  }
-};
-
-// ===== SMOOTH SCROLL =====
-const SmoothScroll = {
-  init() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          const offset = 80;
-          const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-          window.scrollTo({ top, behavior: 'smooth' });
-        }
-      });
-    });
-  }
-};
-
-// ===== MOBILE MENU =====
-const MobileMenu = {
-  init() {
-    const toggle = document.querySelector('.mobile-toggle');
-    const nav = document.querySelector('.nav-links');
-    
-    if (toggle && nav) {
-      toggle.addEventListener('click', () => {
-        nav.classList.toggle('active');
-        toggle.classList.toggle('active');
-      });
-    }
   }
 };
 
@@ -520,57 +695,51 @@ const Observer = {
       });
     }, { threshold: 0.1 });
     
-    document.querySelectorAll('.card, .prob-card, .feat, .nepal-item').forEach(el => {
+    document.querySelectorAll('.cyber-card, .problem-card, .feature-card, .nepal-card').forEach(el => {
       el.style.opacity = '0';
       el.style.transform = 'translateY(30px)';
-      el.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+      el.style.transition = 'all 0.8s cubic-bezier(0.23, 1, 0.32, 1)';
       observer.observe(el);
     });
   }
 };
 
-// ===== INIT APP =====
+// ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🌱 Carbon Karma initialized');
+  console.log('🚀 CARBON KARMA SYSTEM INITIALIZED');
   
-  // Particle system
-  const canvas = document.getElementById('particles');
-  if (canvas) new ParticleSystem(canvas);
-  
-  // Animate hero stats
-  document.querySelectorAll('.stat .num').forEach(el => {
-    const target = parseFloat(el.dataset.count);
-    Utils.animateNumber(el, target);
-  });
-  
-  // Initialize all modules
+  // Initialize all systems
+  new ParticleSystem('particles-hero');
+  Navigation.init();
+  ActivityLogger.init();
+  Calculator.init();
   Leaderboard.init();
   Rewards.init();
   Donations.init();
-  ActivityLogger.init();
-  SmoothScroll.init();
-  MobileMenu.init();
+  ProgressChart.init();
   Observer.init();
   
-  // Add animation styles
-  const animations = document.createElement('style');
-  animations.textContent = `
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  `;
-  document.head.appendChild(animations);
+  // Animate hero stats
+  const statCarbon = document.getElementById('stat-carbon');
+  const statUsers = document.getElementById('stat-users');
+  const statImpact = document.getElementById('stat-impact');
+  
+  if (statCarbon) Utils.animateNumber(statCarbon, 2.3, 2000, 1);
+  if (statUsers) Utils.animateNumber(statUsers, 1247, 2000, 0);
+  if (statImpact) Utils.animateNumber(statImpact, 3247, 2000, 0);
+  
+  // Set current date
+  const dateEl = document.getElementById('today-date');
+  if (dateEl) dateEl.textContent = Utils.getCurrentDate();
+  
+  // Update community total
+  const communityTotal = document.getElementById('community-total');
+  if (communityTotal) {
+    const total = APP_STATE.leaderboard.data.reduce((sum, u) => sum + u.carbon, 0);
+    communityTotal.textContent = `${total.toFixed(0)} KG`;
+  }
 });
 
-// Export calculator function for onclick
-window.calc = () => Calculator.calculate();
+// Export for onclick handlers
 window.Rewards = Rewards;
+window.Donations = Donations;
