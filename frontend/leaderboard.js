@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+57;;import React, { useState } from 'react';
 import { Trophy, Briefcase, GraduationCap, Users, Leaf, TrendingUp, Award, Zap } from 'lucide-react';
 
 const CarbonLeaderboard = () => {
