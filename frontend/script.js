@@ -742,4 +742,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Export for onclick handlers
 window.Rewards = Rewards;
-window.Donations = Donations;
+window.Donations = Donations; 
+async function sendMessage(message, language) {
+    const response = await fetch('http://localhost:5000/ai-response', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message, language })
+    });
+
+    const data = await response.json();
+    addMessage('assistant', data.reply);
+}
