@@ -769,6 +769,13 @@ document.addEventListener('DOMContentLoaded', () => {
   ProgressChart.init();
   Observer.init();
   
+  // Initialize new premium features
+  Achievements.init();
+  DailyChallenges.init();
+  Analytics.init();
+  NotificationManager.init();
+  SettingsManager.init();
+  
   // Animate hero stats
   const statCarbon = document.getElementById('stat-carbon');
   const statUsers = document.getElementById('stat-users');
@@ -788,12 +795,269 @@ document.addEventListener('DOMContentLoaded', () => {
     const total = APP_STATE.leaderboard.data.reduce((sum, u) => sum + u.carbon, 0);
     communityTotal.textContent = `${total.toFixed(0)} KG`;
   }
+  
+  // Setup modal interactions
+  const settingsModal = document.getElementById('settings-modal');
+  if (settingsModal) {
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) closeSettings();
+    });
+  }
+  
+  // Setup notifications panel interactions
+  const notifPanel = document.getElementById('notifications-panel');
+  if (notifPanel) {
+    document.addEventListener('click', (e) => {
+      if (!notifPanel.contains(e.target) && !e.target.closest('[onclick="toggleNotifications()"]')) {
+        notifPanel.classList.remove('active');
+      }
+    });
+  }
 });
 
 // Export for onclick handlers
 window.Rewards = Rewards;
 window.Donations = Donations;
-window.logoutUser = logoutUser; 
+window.logoutUser = logoutUser;
+window.openSettings = openSettings;
+window.closeSettings = closeSettings;
+window.toggleNotifications = toggleNotifications;
+
+// ===== ACHIEVEMENTS SYSTEM =====
+const Achievements = {
+  badges: [
+    { id: 1, name: 'FIRST STEPS', icon: '👣', desc: 'Log your first activity', points: 50, unlocked: true },
+    { id: 2, name: 'WEEK WARRIOR', icon: '⚔️', desc: '7-day streak', points: 100, unlocked: true },
+    { id: 3, name: 'ECO CHAMPION', icon: '🏆', desc: '50kg carbon saved', points: 250, unlocked: false },
+    { id: 4, name: 'TREE PLANTER', icon: '🌳', desc: '10 trees planted', points: 150, unlocked: true },
+    { id: 5, name: 'LEADERBOARD LEGEND', icon: '👑', desc: 'Reach top 10', points: 500, unlocked: false },
+    { id: 6, name: 'SOCIAL BUTTERFLY', icon: '🦋', desc: '10 friends added', points: 200, unlocked: false },
+    { id: 7, name: 'REWARDS COLLECTOR', icon: '🎁', desc: '5 rewards redeemed', points: 175, unlocked: false },
+    { id: 8, name: 'CARBON HERO', icon: '🦸', desc: '100kg carbon saved', points: 500, unlocked: false },
+    { id: 9, name: 'CHALLENGE MASTER', icon: '🎯', desc: '20 challenges completed', points: 300, unlocked: false },
+    { id: 10, name: 'GLOBAL IMPACT', icon: '🌍', desc: '1000kg community carbon', points: 1000, unlocked: false },
+  ],
+  
+  init() {
+    this.render();
+    this.setupFilters();
+  },
+  
+  render(filter = 'all') {
+    const grid = document.getElementById('achievements-grid');
+    if (!grid) return;
+    
+    const filtered = filter === 'all' ? this.badges : this.badges.filter(b => 
+      filter === 'unlocked' ? b.unlocked : !b.unlocked
+    );
+    
+    grid.innerHTML = filtered.map(badge => `
+      <div class="achievement-card ${badge.unlocked ? '' : 'locked'}">
+        <div class="achievement-icon">${badge.icon}</div>
+        <div class="achievement-name">${badge.name}</div>
+        <div class="achievement-desc">${badge.desc}</div>
+        <div class="achievement-points">+${badge.points} PTS</div>
+        ${!badge.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
+      </div>
+    `).join('');
+  },
+  
+  setupFilters() {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.render(btn.dataset.filter);
+      });
+    });
+  }
+};
+
+// ===== DAILY CHALLENGES =====
+const DailyChallenges = {
+  challenges: [
+    { id: 1, title: 'MEATLESS MONDAY', icon: '🥗', desc: '3 meals', progress: 2, target: 3, reward: 50 },
+    { id: 2, title: '10K STEPS', icon: '👟', desc: 'Daily goal', progress: 7200, target: 10000, reward: 75 },
+    { id: 3, title: 'PLASTIC FREE', icon: '♻️', desc: 'No single-use', progress: 1, target: 1, reward: 100 },
+    { id: 4, title: 'BIKE TO WORK', icon: '🚴', desc: '5km cycle', progress: 3, target: 5, reward: 60 },
+  ],
+  
+  init() {
+    this.render();
+  },
+  
+  render() {
+    const list = document.getElementById('challenges-list');
+    if (!list) return;
+    
+    list.innerHTML = this.challenges.map(challenge => {
+      const percent = Math.min(100, (challenge.progress / challenge.target) * 100);
+      const completed = challenge.progress >= challenge.target;
+      
+      return `
+      <div class="challenge-card">
+        <div class="challenge-header">
+          <div class="challenge-icon">${challenge.icon}</div>
+          <div class="challenge-info">
+            <h4>${challenge.title}</h4>
+            <p>${challenge.desc}</p>
+          </div>
+        </div>
+        <div class="challenge-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${percent}%"></div>
+          </div>
+          <div class="progress-label">
+            <span>${challenge.progress}/${challenge.target}</span>
+            <span>${completed ? '✓ COMPLETED' : ''}</span>
+          </div>
+        </div>
+        <div class="challenge-reward">+${challenge.reward} PTS</div>
+      </div>
+      `;
+    }).join('');
+  }
+};
+
+// ===== NOTIFICATIONS =====
+const NotificationManager = {
+  notifications: [],
+  
+  init() {
+    this.addNotification('Welcome back! Continue your streak 🔥', 'info');
+  },
+  
+  addNotification(message, type = 'info') {
+    const notif = {
+      id: Date.now(),
+      message,
+      type,
+      timestamp: new Date()
+    };
+    
+    this.notifications.unshift(notif);
+    this.render();
+    
+    // Auto-remove after 5 seconds if not interactive
+    setTimeout(() => this.removeNotification(notif.id), 5000);
+  },
+  
+  render() {
+    const list = document.getElementById('notifications-list');
+    if (!list || this.notifications.length === 0) return;
+    
+    list.innerHTML = this.notifications.map(notif => `
+      <div class="notification-item">
+        <span class="notif-icon">${notif.type === 'success' ? '✓' : notif.type === 'error' ? '✕' : 'ℹ'}</span>
+        <div class="notif-content">
+          <span class="notif-title">${notif.message}</span>
+          <span class="notif-time">${this.getTimeAgo(notif.timestamp)}</span>
+        </div>
+      </div>
+    `).join('');
+  },
+  
+  removeNotification(id) {
+    this.notifications = this.notifications.filter(n => n.id !== id);
+    this.render();
+  },
+  
+  getTimeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  }
+};
+
+// ===== ANALYTICS =====
+const Analytics = {
+  init() {
+    this.renderCategoryBreakdown();
+    this.renderStats();
+  },
+  
+  renderCategoryBreakdown() {
+    const container = document.getElementById('category-breakdown');
+    if (!container) return;
+    
+    const categories = [
+      { name: 'Transportation', icon: '🚗', value: '18.5 KG', percent: 41 },
+      { name: 'Food', icon: '🥗', value: '12.3 KG', percent: 27 },
+      { name: 'Energy', icon: '⚡', value: '10.2 KG', percent: 23 },
+      { name: 'Shopping', icon: '🛍️', value: '4.2 KG', percent: 9 },
+    ];
+    
+    container.innerHTML = categories.map(cat => `
+      <div class="category-item">
+        <span class="category-icon">${cat.icon}</span>
+        <div style="flex: 1;">
+          <div class="category-label">${cat.name}</div>
+          <div class="progress-bar" style="height: 6px; margin-top: 4px;">
+            <div class="progress-fill" style="width: ${cat.percent}%"></div>
+          </div>
+        </div>
+        <span class="category-value">${cat.value}</span>
+      </div>
+    `).join('');
+  },
+  
+  renderStats() {
+    const stats = {
+      totalImpact: '45.2',
+      avgPerDay: '1.5',
+      treesEq: '3',
+      co2Offset: '23'
+    };
+    
+    Object.entries(stats).forEach(([key, value]) => {
+      const el = document.getElementById(key === 'totalImpact' ? 'total-impact' : 
+                    key === 'avgPerDay' ? 'avg-per-day' : 
+                    key === 'treesEq' ? 'trees-eq' : 'co2-offset');
+      if (el) el.textContent = value + (key === 'treesEq' ? '' : ' KG');
+    });
+  }
+};
+
+// ===== SETTINGS & PREFERENCES =====
+const SettingsManager = {
+  init() {
+    this.setupTabSwitching();
+  },
+  
+  setupTabSwitching() {
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+      });
+    });
+  }
+};
+
+// ===== GLOBAL UI FUNCTIONS =====
+function openSettings() {
+  const modal = document.getElementById('settings-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeSettings() {
+  const modal = document.getElementById('settings-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function toggleNotifications() {
+  const panel = document.getElementById('notifications-panel');
+  if (panel) panel.classList.toggle('active');
+}
+
 async function sendMessage(message, language) {
     const response = await fetch('http://localhost:5000/ai-response', {
         method: 'POST',

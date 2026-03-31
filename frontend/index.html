@@ -489,6 +489,108 @@
         </div>
     </section>
 
+    <!-- Achievements & Badges -->
+    <section class="section achievements" id="achievements">
+        <div class="section-header">
+            <span class="section-tag">UNLOCKABLES</span>
+            <h2 class="section-title">ACHIEVEMENTS & BADGES</h2>
+            <p class="section-desc">Unlock exclusive badges and milestones</p>
+        </div>
+
+        <div class="achievements-filter">
+            <button class="filter-btn active" data-filter="all">ALL</button>
+            <button class="filter-btn" data-filter="unlocked">UNLOCKED</button>
+            <button class="filter-btn" data-filter="locked">LOCKED</button>
+        </div>
+
+        <div class="achievements-grid" id="achievements-grid">
+            <!-- Populated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Daily Challenges -->
+    <section class="section daily-challenges" id="challenges">
+        <div class="section-header">
+            <span class="section-tag">DAILY</span>
+            <h2 class="section-title">MISSIONS & CHALLENGES</h2>
+            <p class="section-desc">Complete daily missions to earn bonus points</p>
+        </div>
+
+        <div class="challenges-container">
+            <div class="challenges-list" id="challenges-list">
+                <!-- Populated by JavaScript -->
+            </div>
+            <div class="streak-tracker">
+                <div class="streak-content">
+                    <div class="streak-icon">🔥</div>
+                    <div class="streak-info">
+                        <h4>CURRENT STREAK</h4>
+                        <span class="streak-days" id="streak-days">7</span>
+                        <p>Keep it going!</p>
+                    </div>
+                </div>
+                <div class="streak-milestone">
+                    <h5>NEXT MILESTONE</h5>
+                    <div class="milestone-bar">
+                        <div class="milestone-fill" id="milestone-fill"></div>
+                    </div>
+                    <p id="milestone-text">7/10 days</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analytics & Insights -->
+    <section class="section analytics" id="analytics">
+        <div class="section-header">
+            <span class="section-tag">INSIGHTS</span>
+            <h2 class="section-title">YOUR IMPACT ANALYTICS</h2>
+            <p class="section-desc">Detailed breakdown of your sustainability journey</p>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="cyber-card analytics-card">
+                <h4>WEEKLY COMPARISON</h4>
+                <canvas id="comparison-chart"></canvas>
+                <div class="chart-legend">
+                    <span>📈 This Week</span>
+                    <span>📉 Last Week</span>
+                </div>
+            </div>
+
+            <div class="cyber-card analytics-card">
+                <h4>IMPACT BY CATEGORY</h4>
+                <div class="category-breakdown" id="category-breakdown">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="cyber-card analytics-card full-width">
+                <h4>CARBON SAVINGS TREND (30 DAYS)</h4>
+                <canvas id="trend-chart"></canvas>
+            </div>
+
+            <div class="cyber-card stats-overview">
+                <div class="overview-stat">
+                    <span class="ov-label">Total Impact</span>
+                    <span class="ov-value" id="total-impact">45.2 KG</span>
+                </div>
+                <div class="overview-stat">
+                    <span class="ov-label">Avg Per Day</span>
+                    <span class="ov-value" id="avg-per-day">1.5 KG</span>
+                </div>
+                <div class="overview-stat">
+                    <span class="ov-label">Trees Equivalent</span>
+                    <span class="ov-value" id="trees-eq">3</span>
+                </div>
+                <div class="overview-stat">
+                    <span class="ov-label">CO₂ Offset</span>
+                    <span class="ov-value" id="co2-offset">23 KG</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Rewards -->
     <section class="section rewards" id="rewards">
         <div class="section-header">
@@ -726,6 +828,134 @@
 
     <!-- Toast Notification Container -->
     <div id="toast-container"></div>
+
+    <!-- Notifications Panel -->
+    <div class="notifications-panel" id="notifications-panel">
+        <div class="notifications-header">
+            <h3>NOTIFICATIONS</h3>
+            <button class="notifications-close" onclick="toggleNotifications()">✕</button>
+        </div>
+        <div class="notifications-list" id="notifications-list">
+            <div class="notification-item unread">
+                <span class="notif-icon">🏅</span>
+                <div class="notif-content">
+                    <span class="notif-title">Achievement Unlocked</span>
+                    <span class="notif-time">2 min ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settings-modal">
+        <div class="modal-backdrop" onclick="closeSettings()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>SETTINGS</h2>
+                <button class="modal-close" onclick="closeSettings()">✕</button>
+            </div>
+
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="profile">Profile</button>
+                <button class="settings-tab" data-tab="notifications">Notifications</button>
+                <button class="settings-tab" data-tab="privacy">Privacy</button>
+                <button class="settings-tab" data-tab="preferences">Preferences</button>
+            </div>
+
+            <div class="settings-content">
+                <!-- Profile Tab -->
+                <div class="settings-section active" id="profile-tab">
+                    <h4>PROFILE SETTINGS</h4>
+                    <div class="setting-item">
+                        <label>Display Name</label>
+                        <input type="text" placeholder="Your Name" class="cyber-input">
+                    </div>
+                    <div class="setting-item">
+                        <label>Bio</label>
+                        <textarea placeholder="Tell us about your sustainability journey" class="cyber-input"></textarea>
+                    </div>
+                    <div class="setting-item">
+                        <label>Avatar Color</label>
+                        <div class="color-picker">
+                            <input type="color" value="#10B981">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary">Save Changes</button>
+                </div>
+
+                <!-- Notifications Tab -->
+                <div class="settings-section" id="notifications-tab">
+                    <h4>NOTIFICATION PREFERENCES</h4>
+                    <div class="toggle-item">
+                        <label>Achievement Alerts</label>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div class="toggle-item">
+                        <label>Challenge Reminders</label>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div class="toggle-item">
+                        <label>Daily Tips</label>
+                        <input type="checkbox">
+                    </div>
+                    <div class="toggle-item">
+                        <label>Leaderboard Updates</label>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div class="toggle-item">
+                        <label>Email Notifications</label>
+                        <input type="checkbox">
+                    </div>
+                </div>
+
+                <!-- Privacy Tab -->
+                <div class="settings-section" id="privacy-tab">
+                    <h4>PRIVACY SETTINGS</h4>
+                    <div class="toggle-item">
+                        <label>Show Profile On Leaderboard</label>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div class="toggle-item">
+                        <label>Allow Friend Requests</label>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div class="toggle-item">
+                        <label>Share Achievements Publicly</label>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div class="danger-zone">
+                        <h5>Danger Zone</h5>
+                        <button class="btn btn-danger">Download My Data</button>
+                        <button class="btn btn-danger">Delete Account</button>
+                    </div>
+                </div>
+
+                <!-- Preferences Tab -->
+                <div class="settings-section" id="preferences-tab">
+                    <h4>APP PREFERENCES</h4>
+                    <div class="setting-item">
+                        <label>Language</label>
+                        <select class="cyber-input">
+                            <option>English</option>
+                            <option>हिन्दी (Hindi)</option>
+                            <option>नेपाली (Nepali)</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>Units</label>
+                        <select class="cyber-input">
+                            <option>Kilogram (KG)</option>
+                            <option>Pound (LB)</option>
+                        </select>
+                    </div>
+                    <div class="toggle-item">
+                        <label>Dark Mode (Coming Soon)</label>
+                        <input type="checkbox" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="./script.js"></script>
 </body>
