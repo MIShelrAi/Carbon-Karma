@@ -345,6 +345,86 @@ const Leaderboard = {
     });
     
     this.render('all');
+    this.displayUserRank();
+  },
+  
+  displayUserRank() {
+    const user = this.getCurrentUser();
+    const yourRankCard = document.getElementById('your-rank-card');
+    
+    if (!user) {
+      // User not logged in, hide the card
+      if (yourRankCard) yourRankCard.style.display = 'none';
+      return;
+    }
+    
+    // Calculate user's rank based on points
+    const userRank = this.calculateUserRank(user);
+    
+    if (yourRankCard && userRank) {
+      yourRankCard.style.display = 'block';
+      
+      // Update rank display
+      document.getElementById('your-rank-number').textContent = `#${userRank.rank}`;
+      document.getElementById('your-rank-stats').textContent = `${user.points} PTS • ${user.carbonSaved} KG SAVED`;
+      
+      // Update medal emoji
+      const medal = document.getElementById('your-rank-medal');
+      if (userRank.rank === 1) medal.textContent = '🥇';
+      else if (userRank.rank === 2) medal.textContent = '🥈';
+      else if (userRank.rank === 3) medal.textContent = '🥉';
+      else if (userRank.rank <= 10) medal.textContent = '⭐';
+      else medal.textContent = '🎯';
+      
+      // Update progress text
+      const progressText = document.getElementById('progress-text');
+      const nextRankPoints = userRank.nextRankPoints;
+      const pointsNeeded = Math.max(0, nextRankPoints - user.points);
+      
+      if (userRank.rank === 1) {
+        progressText.textContent = '👑 YOU ARE THE LEADER!';
+      } else {
+        progressText.textContent = `${pointsNeeded} points to rank #${userRank.rank - 1}`;
+      }
+      
+      // Update progress icon
+      const progressIcon = document.getElementById('progress-icon');
+      if (userRank.rank <= 3) progressIcon.textContent = '🚀';
+      else if (userRank.rank <= 10) progressIcon.textContent = '📈';
+      else progressIcon.textContent = '💪';
+    }
+  },
+  
+  calculateUserRank(user) {
+    // Get all leaderboard data sorted by points (descending)
+    const sorted = [...APP_STATE.leaderboard.data].sort((a, b) => b.points - a.points);
+    
+    // Find user's rank
+    let rank = 1;
+    let nextRankPoints = 0;
+    
+    for (let i = 0; i < sorted.length; i++) {
+      if (sorted[i].points < user.points) {
+        rank = i + 1;
+        nextRankPoints = sorted[i - 1] ? sorted[i - 1].points : user.points;
+        break;
+      }
+    }
+    
+    // If user didn't find a position, they're at the end
+    if (rank === 1 && sorted[0].points < user.points) {
+      rank = 1;
+      nextRankPoints = user.points;
+    } else if (rank === 1) {
+      nextRankPoints = sorted.length > 1 ? sorted[1].points : user.points;
+    }
+    
+    return { rank, nextRankPoints };
+  },
+  
+  getCurrentUser() {
+    const data = localStorage.getItem('carbonKarmaUser');
+    return data ? JSON.parse(data) : null;
   },
   
   render(category) {
@@ -352,12 +432,18 @@ const Leaderboard = {
     const container = document.getElementById('leaderboard-list');
     if (!container) return;
     
+    const currentUser = this.getCurrentUser();
+    
     const filtered = category === 'all'
       ? APP_STATE.leaderboard.data
       : APP_STATE.leaderboard.data.filter(u => u.category === category);
     
-    container.innerHTML = filtered.map((user, idx) => `
-      <div class="leader-entry" style="animation: slideUp 0.4s ${idx * 0.05}s both">
+    container.innerHTML = filtered.map((user, idx) => {
+      const isCurrentUser = currentUser && currentUser.email === user.email;
+      const highlightClass = isCurrentUser ? 'current-user' : '';
+      
+      return `
+      <div class="leader-entry ${highlightClass}" style="animation: slideUp 0.4s ${idx * 0.05}s both">
         <div class="leader-rank">
           <span class="rank-num ${user.rank <= 3 ? 'top' : ''}">#${user.rank}</span>
           ${user.rank === 1 ? '<span class="rank-medal">🥇</span>' : ''}
@@ -366,14 +452,15 @@ const Leaderboard = {
         </div>
         <div class="leader-avatar">${user.avatar}</div>
         <div class="leader-info">
-          <div class="leader-name">${user.name}</div>
+          <div class="leader-name">${user.name}${isCurrentUser ? ' <span class="you-badge">YOU</span>' : ''}</div>
           <div class="leader-stats">
             <span>🌱 ${user.carbon}kg</span>
             <span>⭐ ${user.points} pts</span>
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
     
     this.applyStyles();
   },
@@ -449,6 +536,26 @@ const Leaderboard = {
         gap: 1.5rem;
         font-size: 0.9375rem;
         color: var(--text-secondary);
+      }
+      .leader-entry.current-user {
+        background: rgba(0, 255, 159, 0.1);
+        border: 2px solid var(--neon-cyan);
+        box-shadow: 0 0 20px rgba(0, 255, 159, 0.3);
+      }
+      .leader-entry.current-user:hover {
+        box-shadow: 0 0 30px rgba(0, 255, 159, 0.5);
+      }
+      .you-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+        color: var(--cyber-darker);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-left: 0.5rem;
+        box-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
       }
     `;
     document.head.appendChild(style);
