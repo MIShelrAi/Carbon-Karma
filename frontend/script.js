@@ -704,9 +704,116 @@ const Observer = {
   }
 };
 
+// ===== PROFILE MANAGEMENT =====
+const ProfileManager = {
+  init() {
+    this.checkAuthStatus();
+    this.setupProfileMenu();
+  },
+  
+  checkAuthStatus() {
+    const user = this.getUserData();
+    const profileItem = document.getElementById('profile-item');
+    const getStartedLink = document.getElementById('get-started-link');
+    
+    if (user && user.isAuthenticated) {
+      // User is authenticated - show profile, hide get started
+      if (profileItem) profileItem.classList.remove('hidden');
+      if (getStartedLink) getStartedLink.classList.add('hidden');
+      this.updateProfileUI(user);
+    } else {
+      // User is not authenticated - hide profile, show get started
+      if (profileItem) profileItem.classList.add('hidden');
+      if (getStartedLink) getStartedLink.classList.remove('hidden');
+    }
+  },
+  
+  updateProfileUI(user) {
+    // Generate initials from name
+    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    
+    // Update small avatar
+    const profileAvatar = document.getElementById('profile-avatar');
+    if (profileAvatar) {
+      profileAvatar.textContent = initials;
+      profileAvatar.style.background = this.getColorForUser(initials);
+    }
+    
+    // Update large avatar
+    const profileAvatarLg = document.getElementById('profile-avatar-lg');
+    if (profileAvatarLg) {
+      profileAvatarLg.textContent = initials;
+    }
+    
+    // Update name and email
+    const profileName = document.getElementById('profile-name');
+    const profileEmail = document.getElementById('profile-email');
+    if (profileName) profileName.textContent = user.name.toUpperCase();
+    if (profileEmail) profileEmail.textContent = user.email;
+    
+    // Update stats
+    const profilePoints = document.getElementById('profile-points');
+    const profileCarbon = document.getElementById('profile-carbon');
+    if (profilePoints) profilePoints.textContent = (user.points || 0).toString();
+    if (profileCarbon) profileCarbon.textContent = (user.carbonSaved || 0).toFixed(1);
+  },
+  
+  setupProfileMenu() {
+    const profileBtn = document.getElementById('profile-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    
+    if (profileBtn && profileDropdown) {
+      profileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('active');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.profile-menu')) {
+          profileDropdown.classList.remove('active');
+        }
+      });
+    }
+  },
+  
+  getUserData() {
+    const data = localStorage.getItem('carbonKarmaUser');
+    return data ? JSON.parse(data) : null;
+  },
+  
+  getColorForUser(initials) {
+    const colors = [
+      'linear-gradient(135deg, #00ff9f, #00d4ff)',
+      'linear-gradient(135deg, #b857ff, #ff006e)',
+      'linear-gradient(135deg, #ffea00, #ff6b00)',
+      'linear-gradient(135deg, #00ff9f, #b857ff)',
+      'linear-gradient(135deg, #00d4ff, #ff006e)'
+    ];
+    
+    let hash = 0;
+    for (let i = 0; i < initials.length; i++) {
+      hash = initials.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  }
+};
+
+// ===== LOGOUT FUNCTION =====
+function logoutUser() {
+  const confirmed = confirm('Are you sure you want to logout?');
+  if (confirmed) {
+    localStorage.removeItem('carbonKarmaUser');
+    window.location.href = 'index.html#home';
+  }
+}
+
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
   console.log('🚀 CARBON KARMA SYSTEM INITIALIZED');
+  
+  // Initialize profile manager first
+  ProfileManager.init();
   
   // Initialize all systems
   new ParticleSystem('particles-hero');
@@ -742,7 +849,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Export for onclick handlers
 window.Rewards = Rewards;
-window.Donations = Donations; 
+window.Donations = Donations;
+window.logoutUser = logoutUser; 
 async function sendMessage(message, language) {
     const response = await fetch('http://localhost:5000/ai-response', {
         method: 'POST',

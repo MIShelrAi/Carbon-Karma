@@ -39,9 +39,37 @@
                 <li><a href="#rewards" class="nav-link">REWARDS</a></li>
                 <li><a href="#donate" class="nav-link">DONATE</a></li>
                 <li><a href="#nepal" class="nav-link">NEPAL</a></li>
-                <li><a href="./get-started.html" class="nav-link">GET STARTED</a></li>
-                
-                
+                <li><a href="./get-started.html" class="nav-link" id="get-started-link">GET STARTED</a></li>
+                <li class="profile-item hidden" id="profile-item">
+                    <div class="profile-menu">
+                        <button class="profile-btn" id="profile-btn">
+                            <div class="profile-avatar" id="profile-avatar"></div>
+                        </button>
+                        <div class="profile-dropdown" id="profile-dropdown">
+                            <div class="profile-header">
+                                <div class="profile-avatar-lg" id="profile-avatar-lg"></div>
+                                <div class="profile-info">
+                                    <p class="profile-name" id="profile-name"></p>
+                                    <p class="profile-email" id="profile-email"></p>
+                                </div>
+                            </div>
+                            <div class="profile-stats">
+                                <div class="stat-item-sm">
+                                    <span class="stat-val" id="profile-points">0</span>
+                                    <span class="stat-lab">POINTS</span>
+                                </div>
+                                <div class="stat-item-sm">
+                                    <span class="stat-val" id="profile-carbon">0</span>
+                                    <span class="stat-lab">KG SAVED</span>
+                                </div>
+                            </div>
+                            <hr class="profile-divider">
+                            <a href="#" class="profile-link" onclick="logoutUser()">
+                                <span>🚪 LOGOUT</span>
+                            </a>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
